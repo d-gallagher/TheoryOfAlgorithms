@@ -1,23 +1,20 @@
 #include <stdio.h>
-#include <stdint.h>
-
+#include <inttypes.h>
+/// Take an unsigned 64 bit integer and print the bits
+/// Compare values at i & s using bitwise AND (both 1 = 1, else =0)
+/// printf the result of the bitwise comparison, using ternary operator
+/// \param s
+void printbits(uint64_t s) {
+  for (int i = 63; i >= 0; i--)
+      // 1ULL - Treat 1 as an Unsigned Long Long (Treat as a literal, not a variable)
+    printf("%d", ((1ULL << i) & s) ? 1 : 0);
+}
 
 int main(int argc, char *argv[]){
-  char c = 65;
-  int i = 65;
-  long int l = 65;
-  long long int m = 65;
-
-  uint8_t e = 65;
   uint64_t s = 65;
 
-  printf("%x\t%c\t%d\t%d\n", c, c, c, sizeof(c));
-
-  printf("%x\t%c\t%d\t%d\n", i, i, i, sizeof(i));
-
-  printf("%x\t%c\t%d\t%d\n", l, l, l, sizeof(l));
-
-  printf("%x\t%c\t%d\t%d\n", m, m, m, sizeof(m));
+  printbits(s);
+  printf("\t%llx\t%lld\n", s, s);
 
   return 0;
 }
