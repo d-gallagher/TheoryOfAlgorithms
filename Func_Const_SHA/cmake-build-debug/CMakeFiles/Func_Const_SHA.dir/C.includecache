@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/Func_Const_SHA/sha256.c
+stdio.h
+-
+stdint.h
+-
+
