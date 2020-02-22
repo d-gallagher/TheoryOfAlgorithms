@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Padding.dir/main.c.obj"
   "CMakeFiles/Padding.dir/padding.c.obj"
   "Padding.exe"
   "Padding.exe.manifest"

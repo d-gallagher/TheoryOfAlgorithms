@@ -4,7 +4,6 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/Padding/main.c" "C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/Padding/cmake-build-debug/CMakeFiles/Padding.dir/main.c.obj"
   "C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/Padding/padding.c" "C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/Padding/cmake-build-debug/CMakeFiles/Padding.dir/padding.c.obj"
   )
 set(CMAKE_C_COMPILER_ID "MSVC")
