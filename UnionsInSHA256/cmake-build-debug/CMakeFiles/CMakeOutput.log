@@ -1,0 +1,49 @@
+The system is: Windows - 10.0.18362 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler: C:/Program Files (x86)/Microsoft Visual Studio/2019/Preview/VC/Tools/MSVC/14.25.28508/bin/Hostx86/x86/cl.exe 
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Microsoft (R) C/C++ Optimizing Compiler Version 19.25.28508.3 for x86
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+CMakeCCompilerId.c
+Microsoft (R) Incremental Linker Version 14.25.28508.3
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+/out:CMakeCCompilerId.exe 
+CMakeCCompilerId.obj 
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CMakeCCompilerId.obj"
+
+The C compiler identification is MSVC, found in "C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/UnionsInSHA256/cmake-build-debug/CMakeFiles/3.15.3/CompilerIdC/CMakeCCompilerId.exe"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/UnionsInSHA256/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):nmake /nologo cmTC_eb02b\fast && 	"C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Tools\MSVC\14.25.28508\bin\HostX86\x86\nmake.exe" -f CMakeFiles\cmTC_eb02b.dir\build.make /nologo -L                  CMakeFiles\cmTC_eb02b.dir\build
+Building C object CMakeFiles/cmTC_eb02b.dir/testCCompiler.c.obj
+	C:\PROGRA~2\MICROS~1\2019\Preview\VC\Tools\MSVC\1425~1.285\bin\Hostx86\x86\cl.exe @C:\Users\jibis\AppData\Local\Temp\nm6D54.tmp
+testCCompiler.c
+Linking C executable cmTC_eb02b.exe
+	"C:\Program Files\JetBrains\CLion-2019.3.2.win\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_eb02b.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100183~1.0\x86\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100183~1.0\x86\mt.exe --manifests  -- C:\PROGRA~2\MICROS~1\2019\Preview\VC\Tools\MSVC\1425~1.285\bin\Hostx86\x86\link.exe /nologo @CMakeFiles\cmTC_eb02b.dir\objects1.rsp @C:\Users\jibis\AppData\Local\Temp\nm6EAD.tmp
+
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/UnionsInSHA256/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):nmake /nologo cmTC_98c91\fast && 	"C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\VC\Tools\MSVC\14.25.28508\bin\HostX86\x86\nmake.exe" -f CMakeFiles\cmTC_98c91.dir\build.make /nologo -L                  CMakeFiles\cmTC_98c91.dir\build
+Building C object CMakeFiles/cmTC_98c91.dir/CMakeCCompilerABI.c.obj
+	C:\PROGRA~2\MICROS~1\2019\Preview\VC\Tools\MSVC\1425~1.285\bin\Hostx86\x86\cl.exe @C:\Users\jibis\AppData\Local\Temp\nm70CF.tmp
+CMakeCCompilerABI.c
+Linking C executable cmTC_98c91.exe
+	"C:\Program Files\JetBrains\CLion-2019.3.2.win\bin\cmake\win\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_98c91.dir --rc=C:\PROGRA~2\WI3CF2~1\10\bin\100183~1.0\x86\rc.exe --mt=C:\PROGRA~2\WI3CF2~1\10\bin\100183~1.0\x86\mt.exe --manifests  -- C:\PROGRA~2\MICROS~1\2019\Preview\VC\Tools\MSVC\1425~1.285\bin\Hostx86\x86\link.exe /nologo @CMakeFiles\cmTC_98c91.dir\objects1.rsp @C:\Users\jibis\AppData\Local\Temp\nm710E.tmp
+
+
+
