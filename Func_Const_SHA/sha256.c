@@ -79,11 +79,11 @@ union block{
 // FINISH - Padding is complete.
 enum flag {READ, PAD0, PAD1, FINISH};
 
-// nobits is the number of bits we read form the file (reading file in blocks of x size)
+// numbits is the number of bits we read form the file (reading file in blocks of x size)
 // If numbits mod 512 (ULL = Unsingned long long) has a remainder, this is where we start padding.
-// Hence the 512ULL minus the modulo of nobits to the 512.
-uint64_t  numzerobytes(uint64_t nobits){
-    uint64_t result = 512ULL - (nobits % 512ULL);
+// Hence the 512ULL minus the modulo of numbits to the 512.
+uint64_t  numzerobytes(uint64_t numbits){
+    uint64_t result = 512ULL - (numbits % 512ULL);
 
     // Check the size of result to decide padding
     // If there's not enough room in the last block to perform the padding, add another block.
@@ -100,14 +100,14 @@ uint64_t  numzerobytes(uint64_t nobits){
 
 // Track at which point the message has been padded
 // Nextblock will read from infile into M.
-// Track how many bytes have been read (to determine how much padding to apply), using _nobits
-// Set a status flag depending on the state it's at (Still reading file(READ), Started padding zero's(PAD0),
-int nextblock (union block *M, FILE *infile, uint64_t *_nobits, enum flag *status){
+// Track how many bytes have been read (to determine how much padding to apply), using numbits
+// Set a status flag depending on the state it's at (Still reading file(READ), Started padding zero's(PAD0) ...
+int nextblock (union block *M, FILE *infile, uint64_t *numbits, enum flag *status){
     uint8_t i;
 
     // Read the file one byte at a time
     // PTIx8 is using the inttypes lib to print the uint as hex
-    for (*_nobits = 0, i = 0; fread(&M->eight[i], 1, 1, infile) == 1; *_nobits += 8) {
+    for (*numbits = 0, i = 0; fread(&M->eight[i], 1, 1, infile) == 1; *numbits += 8) {
         printf("%02" PRIx8, M->eight[i]);
     }
 
@@ -115,15 +115,42 @@ int nextblock (union block *M, FILE *infile, uint64_t *_nobits, enum flag *statu
     printf("%08" PRIx8, 0x80);
 
     // Pad the input with zeros
-    for (uint64_t i = numzerobytes(*_nobits); i > 0; i--) {
+    for (uint64_t i = numzerobytes(*numbits); i > 0; i--) {
         printf("%02" PRIx8, 0x00);
     }
     // Pad the input with the final 64 bits
-    printf("%016" PRIx64, *_nobits);
+    printf("%016" PRIx64, *numbits);
 
 }
 
+// Block will be 512 bits
+// Current hash value will be stored in an array of 32 bit unsigned integers.
 void nexthash(union block *M, uint32_t *H){
+    uint32_t W[64];
+    uint32_t a, b, c, d, e, f, g, h, T1, T2;
+    int t;
+
+    // Prepare the message schedule
+    for (t = 0; t < 16; t++) {
+        W[t] = M->threetwo[t];
+    }
+    for (t = 16; t < 64; t++) {
+        W[t] = sig1(W[t-2]) + W[t-7] + sig0(W[t-15]) + W[t-16];
+    }
+
+    // Init working variables with hash values
+    a = H[0]; b = H[1]; c = H[2]; d = H[3];
+    e = H[4]; f = H[5]; g = H[6]; h = H[7];
+
+    for (t = 0; t < 64; t++) {
+        T1 = h + Sig1(e) + Ch(e, f, g) + K[t] + W[t];
+        T2 = Sig0(a) + Maj(a, b, c);
+        h = g; g = f; f = e; e = d + T1;
+        d = c; c = b; b = a; a = T1 + T2;
+    }
+
+    H[0] += a; H[1] += b ; H[2] += c; H[3] += d;
+    H[4] += e; H[5] += f ; H[6] += g; H[7] += h;
 
 }
 
@@ -146,13 +173,13 @@ int main(int argc, char *argv[]){
 
     // Current padded message block (read from the message of whatever finite length)
     union block M;
-    uint64_t _nobits = 0;
+    uint64_t numbits = 0;
     enum flag status = READ;
 
     // Loop through the padded message blocks until the end of file
     // Pass nextblock() a pointer to M so that it can read into that memory location, the next 512 bits for the next block
     // - This is using the union data structure so 'M.eight' is an array of (64 * 8bit) unsigned integers into which can be read a byte at a time from the file.
-    while(nextblock(&M, infile,_nobits, status)){
+    while(nextblock(&M, infile, numbits, status)){
         // Calculate the next hash value
         // 'H' is our initial hash value
         // nextHash(&M, &H);
