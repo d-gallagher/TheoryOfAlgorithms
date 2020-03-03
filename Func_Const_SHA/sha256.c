@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 // Constants (Cubed root of the first 64 primes, first 32 bits after the decimal point to integer then hex)
 const uint32_t K[] ={
@@ -61,26 +62,79 @@ uint32_t sig0(uint32_t x){
 uint32_t sig1(uint32_t x){
     return ROTR(x, 17) ^ ROTR(x, 19) ^ SHR(x, 10);
 }
+
+// Adding from Padding
+// Represents the currrent block which has been read from the padded message
+// Can be read as an array of 64, 32 or 8 bit integers
+union block{
+    uint64_t sixfour[8];
+    uint32_t threetwo[16];
+    uint8_t eight[64];
+};
+
+// nobits is the number of bits we read form the file (reading file in blocks of x size)
+// If numbits mod 512 (ULL = Unsingned long long) has a remainder, this is where we start padding.
+// Hence the 512ULL minus the modulo of nobits to the 512.
+uint64_t  numzerobytes(uint64_t nobits){
+    uint64_t result = 512ULL - (nobits % 512ULL);
+
+    // Check the size of result to decide padding
+    // If there's not enough room in the last block to perform the padding, add another block.
+    if(result < 65){
+        result += 512;
+    }
+
+    // Make space for the 8 bits and the 64 bits which have to be included in the padding
+    result -= 72;
+
+    // Return the result as an 8bit ULL
+    return (result / 8ULL);
+}
+
 int main(int argc, char *argv[]){
-	uint32_t x,y,z;
-	x = 0x0f0f0f0f;
-	y = 0xcccccccc;
-	z = 0x55555555;
 
-	printf("x          = %08x\n", x);
-    printf("y          = %08x\n", y);
-    printf("z          = %08x\n", z);
-	printf("Ch(x,y,z)  = %08x\n", Ch(x,y,z));
-	printf("Maj(x,y,z) = %08x\n", Maj(x,y,z));
-	printf("SHR(x,4)   = %08x\n", SHR(x,4));
-	printf("ROTR(x,4)  = %08x\n", ROTR(x,4));
-	printf("Sig0(x)    = %08x\n", Sig0(x));
-	printf("Sig1(x)    = %08x\n", Sig1(x));
-    printf("sig0(x)    = %08x\n", sig0(x));
-    printf("sig1(x)    = %08x\n", sig1(x));
+    // If No filename specified show error
+    if (argc != 2){
+        printf("Error.. Single filename expected as an argument.");
+        return 1;
+    }
 
-    printf("K[20]      = %08x\n", K[50]);
-    printf("H[2]       = %08x\n", H[1]);
+    // File pointer
+    FILE *infile = fopen(argv[1], "rb");
 
+    // If can not open file show error
+    if(!infile){
+        printf("Error.. Could not open file: %s. \n", argv[1]);
+        return 1;
+    }
+
+    // Bitesize to read
+    union block M;
+    uint64_t _nobits;
+    uint8_t i;
+
+
+    // Read the file one byte at a time
+    // PTIx8 is using the inttypes lib to print the uint as hex
+    for (_nobits = 0, i = 0; fread(&M.eight[i], 1, 1, infile) == 1; _nobits += 8) {
+        printf("%02" PRIx8, M.eight[i]);
+    }
+
+    // Print bits of hex value 80 => 1000 0000 (this padding will always be required in sha256)
+    printf("%08" PRIx8, 0x80);
+
+    // Pad the input with zeros
+    for (uint64_t i = numzerobytes(_nobits); i > 0; i--) {
+        printf("%02" PRIx8, 0x00);
+    }
+    // Pad the input with the final 64 bits
+    printf("%016" PRIx64, _nobits);
+
+    // Formatting for easier readability.
+    printf("\n");
+
+
+    // Close the file reader
+    fclose(infile);
 	return 0;
-} 
+}
