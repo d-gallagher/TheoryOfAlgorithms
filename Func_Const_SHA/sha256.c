@@ -72,6 +72,13 @@ union block{
     uint8_t eight[64];
 };
 
+// Flags represent the four different states that nextblock may encounter:
+// READ   - Still reading file
+// PAD0   - Started padding zero's to end of message (Not enough space to complete the padding in the current block but the 1 bit has been appended already)
+// PAD1   - Reached end of file requiring exactly one full block of padding. (The first bit of the padding will be a 1)
+// FINISH - Padding is complete.
+enum flag {READ, PAD0, PAD1, FINISH};
+
 // nobits is the number of bits we read form the file (reading file in blocks of x size)
 // If numbits mod 512 (ULL = Unsingned long long) has a remainder, this is where we start padding.
 // Hence the 512ULL minus the modulo of nobits to the 512.
@@ -91,6 +98,35 @@ uint64_t  numzerobytes(uint64_t nobits){
     return (result / 8ULL);
 }
 
+// Track at which point the message has been padded
+// Nextblock will read from infile into M.
+// Track how many bytes have been read (to determine how much padding to apply), using _nobits
+// Set a status flag depending on the state it's at (Still reading file(READ), Started padding zero's(PAD0),
+int nextblock (union block *M, FILE *infile, uint64_t *_nobits, enum flag *status){
+    uint8_t i;
+
+    // Read the file one byte at a time
+    // PTIx8 is using the inttypes lib to print the uint as hex
+    for (*_nobits = 0, i = 0; fread(&M->eight[i], 1, 1, infile) == 1; *_nobits += 8) {
+        printf("%02" PRIx8, M->eight[i]);
+    }
+
+    // Print bits of hex value 80 => 1000 0000 (this padding will always be required in sha256)
+    printf("%08" PRIx8, 0x80);
+
+    // Pad the input with zeros
+    for (uint64_t i = numzerobytes(*_nobits); i > 0; i--) {
+        printf("%02" PRIx8, 0x00);
+    }
+    // Pad the input with the final 64 bits
+    printf("%016" PRIx64, *_nobits);
+
+}
+
+void nexthash(union block *M, uint32_t *H){
+
+}
+
 int main(int argc, char *argv[]){
 
     // If No filename specified show error
@@ -108,28 +144,25 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    // Bitesize to read
+    // Current padded message block (read from the message of whatever finite length)
     union block M;
-    uint64_t _nobits;
-    uint8_t i;
+    uint64_t _nobits = 0;
+    enum flag status = READ;
 
-
-    // Read the file one byte at a time
-    // PTIx8 is using the inttypes lib to print the uint as hex
-    for (_nobits = 0, i = 0; fread(&M.eight[i], 1, 1, infile) == 1; _nobits += 8) {
-        printf("%02" PRIx8, M.eight[i]);
+    // Loop through the padded message blocks until the end of file
+    // Pass nextblock() a pointer to M so that it can read into that memory location, the next 512 bits for the next block
+    // - This is using the union data structure so 'M.eight' is an array of (64 * 8bit) unsigned integers into which can be read a byte at a time from the file.
+    while(nextblock(&M, infile,_nobits, status)){
+        // Calculate the next hash value
+        // 'H' is our initial hash value
+        // nextHash(&M, &H);
     }
 
-    // Print bits of hex value 80 => 1000 0000 (this padding will always be required in sha256)
-    printf("%08" PRIx8, 0x80);
+    for (int i = 0; i < 8; ++i) {
+        printf("%02" PRIx32, H[i]);
+        printf("\n");
 
-    // Pad the input with zeros
-    for (uint64_t i = numzerobytes(_nobits); i > 0; i--) {
-        printf("%02" PRIx8, 0x00);
     }
-    // Pad the input with the final 64 bits
-    printf("%016" PRIx64, _nobits);
-
     // Formatting for easier readability.
     printf("\n");
 
