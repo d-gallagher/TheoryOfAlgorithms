@@ -5,6 +5,8 @@
 #include <stdint.h>
 #include <inttypes.h>
 
+#define WORD uint32_t
+
 // Constants (Cubed root of the first 64 primes, first 32 bits after the decimal point to integer then hex)
 const uint32_t K[] ={
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
@@ -25,10 +27,10 @@ const uint32_t K[] ={
         0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 };
 // initial values for 'H' used in the algorithm (first 32 bits of the fractional parts of sqRoot of first 8 primes)
-uint32_t H[] = {
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
-};
+//uint32_t H[] = {
+//        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+//        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+//};
 
 // Choose
 uint32_t Ch(uint32_t x, uint32_t y, uint32_t z){
@@ -65,12 +67,35 @@ uint32_t sig1(uint32_t x){
 
 // Adding from Padding
 // Represents the currrent block which has been read from the padded message
+// The Union will consume 64 bytes of memory
 // Can be read as an array of 64, 32 or 8 bit integers
+// Accessing memory in this manner means using different types (8, 32, 64) which introduces endian issues
+//
 union block{
     uint64_t sixfour[8];
     uint32_t threetwo[16];
     uint8_t eight[64];
 };
+
+// Custom endian swap
+uint64_t  swap_endian(uint64_t x){
+
+    uint64_t mask[8];
+    mask[0] = 0xff;
+    for (int i = 1; i < 8; i++) {
+        mask[i] = mask[0] << (8 * i);
+    }
+    uint64_t y =    (x >> 56) & mask[0]
+                    ^ ((x >> 40) & mask[1])
+                    ^ ((x >> 24) & mask[2])
+                    ^ ((x >>  8) & mask[3])
+                    ^ ((x <<  8) & mask[4])
+                    ^ ((x << 24) & mask[5])
+                    ^ ((x << 40) & mask[6])
+                    ^ ((x << 56) & mask[7]);
+
+    return y;
+}
 
 // Flags represent the four different states that nextblock may encounter:
 // READ   - Still reading file
@@ -111,7 +136,7 @@ int nextblock (union block *M, FILE *infile, uint64_t *numbits, enum flag *statu
         for (int i = 0; i < 56; i++) {
             M->eight[i] = 0;
         }
-        M->sixfour[7] = *numbits;
+        M->sixfour[7] = swap_endian(*numbits);
         *status = FINISH;
         return 1;
     }
@@ -120,7 +145,12 @@ int nextblock (union block *M, FILE *infile, uint64_t *numbits, enum flag *statu
     // Read in 64 * 1 byte items from infile and store in M.eight
     size_t numbytesread = fread(M->eight, 1, 64, infile);
 
-    if (numbytesread == 64) return 1;
+    if (numbytesread == 64) {
+        for (int i = 0; i < 16; i++) {
+            M->threetwo[i] = swap_endian(M->threetwo[i]);
+        }
+        return 1;
+    }
 
     // Fit all padding in last block if there is enough space (If less than 56 bits read then there is space..)
     if (numbytesread < 56){
@@ -128,7 +158,10 @@ int nextblock (union block *M, FILE *infile, uint64_t *numbits, enum flag *statu
         for (int i = numbytesread + 1; i < 56; i++) {
             M->eight[i] = 0;
         }
-        M->sixfour[7] = *numbits;
+        for (int i = 0; i < 14; i++) {
+            M->threetwo[i] = swap_endian(M->threetwo[i]);
+        }
+        M->sixfour[7] = swap_endian(*numbits);
         *status = FINISH;
         return 1;
     }
@@ -137,6 +170,9 @@ int nextblock (union block *M, FILE *infile, uint64_t *numbits, enum flag *statu
     M->eight[numbytesread] = 0x80;
     for (int i = numbytesread + 1; i < 64; i++) {
         M->eight[i] = 0;
+    }
+    for (int i = 0; i < 14; i++) {
+        M->threetwo[i] = swap_endian(M->threetwo[i]);
     }
     *status = PAD0;
     return 1;
@@ -190,6 +226,10 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
+    WORD H[] = {
+            0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+            0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+    };
     // Current padded message block (read from the message of whatever finite length)
     union block M;
     uint64_t numbits = 0;
@@ -201,7 +241,7 @@ int main(int argc, char *argv[]){
     while(nextblock(&M, infile, &numbits, &status)){
         // Calculate the next hash value
         // 'H' is our initial hash value
-         nexthash(&M, H);
+         nexthash(M.threetwo, H);
     }
 
     for (int i = 0; i < 8; ++i) {
