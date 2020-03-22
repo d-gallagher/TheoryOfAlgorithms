@@ -5,6 +5,25 @@
 #include <stdio.h>
 #include <inttypes.h>
 
+// Constants for MD5 transform routine taken direct from rfc1321
+#define S11 7
+#define S12 12
+#define S13 17
+#define S14 22
+#define S21 5
+#define S22 9
+#define S23 14
+#define S24 20
+#define S31 4
+#define S32 11
+#define S33 16
+#define S34 23
+#define S41 6
+#define S42 10
+#define S43 15
+#define S44 21
+
+
 // word as 32 bit integer
 #define WORD uint32_t
 // Rotate Left
@@ -56,6 +75,7 @@ typedef union
 // PAD0   - (Not enough space to complete the padding in the current block but the 1 bit has been appended already)
 // FINISH - Padding is complete.
 typedef enum {READ, PAD0, FINISH} PADFLAG;
+typedef enum {BIG, LITTLE} ENDIAN;
 
 // Check endianness of machine
 int is_big_endian(void)
@@ -88,6 +108,13 @@ uint64_t  swap_endianness(uint64_t x){
 
     return y;
 }
+// Byte swap unsigned int Big to little endian
+uint32_t bswap_32( uint32_t val )
+{
+    val = ((val << 8) & 0xFF00FF00 ) | ((val >> 8) & 0xFF00FF );
+    return (val << 16) | (val >> 16);
+}
+
 
 int main(int argc, char *argv[]) {
     printf("System is %s-endian.\n",

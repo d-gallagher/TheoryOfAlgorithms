@@ -100,6 +100,23 @@ MD5 produces a 16 byte hash (128 bits). The chance of a given hash output/digest
 [This](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html) blog explains a little more detail about the size of
 2^128, it's a big number, 1/(2^128) is tiny.
 
+##### Endianness
+Are your significant bits on the left or the right..?  
+
+__Big Endian Byte Order:__   
+The most significant byte (the "big end") of the data is placed at the byte with the lowest address.  
+The rest of the data is placed in order in the next three bytes in memory.  
+__Little Endian Byte Order:__   
+The least significant byte (the "little end") of the data is placed at the byte with the lowest address. 
+The rest of the data is placed in order in the next three bytes in memory.
+
+As I am developing this on windows using Clion, as opposed to a Linux environment, I will not be using the 
+[<byteswap.h>](https://sites.uclouvain.be/SystInfo/usr/include/bits/byteswap.h.html) library for flipping the bits. 
+
+[MINGW](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html) does not facilitate the byteswap.h library. 
+Fortunately flipping bits from big to little, or little to big endian is a well documented topic. I have included functions
+[swap-endianness](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/dcc3798f79ecd054fd5359dcdad27d8eba1bf906/MD5/main.c#L73), 
+and [bswap_32]() to work around the functionality provided in byteswap.h.
 ##### Conclusion
 In conclusion, MD5 fulfills the requirements of a hashing algorithm with one exception, and is no longer considered safe 
 for use with passwords. It is possible for a third party to [generate 2 messages](https://www.mscs.dal.ca/~selinger/md5collision/), that both hash to the same value.  
