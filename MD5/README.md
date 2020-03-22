@@ -116,10 +116,13 @@ As I am developing this on windows using Clion, as opposed to a Linux environmen
 [MINGW](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html) does not facilitate the byteswap.h library. 
 Fortunately flipping bits from big to little, or little to big endian is a well documented topic. I have included functions
 [swap-endianness](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/dcc3798f79ecd054fd5359dcdad27d8eba1bf906/MD5/main.c#L73), 
-and [bswap_32]() to work around the functionality provided in byteswap.h.
+and [bswap_32](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/2900f564e15ef756bd8442136a8bba5dc1571cf3/MD5/main.c#L112) 
+to work around the functionality provided in byteswap.h.
+
 ##### Conclusion
 In conclusion, MD5 fulfills the requirements of a hashing algorithm with one exception, and is no longer considered safe 
-for use with passwords. It is possible for a third party to [generate 2 messages](https://www.mscs.dal.ca/~selinger/md5collision/), that both hash to the same value.  
+for use with passwords. It is possible for a third party to [generate 2 messages](https://www.mscs.dal.ca/~selinger/md5collision/), 
+that both hash to the same value.  
 
 __MD5 fulfills:__
 - __Preimage Resistance:__  
