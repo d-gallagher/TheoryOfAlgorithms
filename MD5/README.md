@@ -1,11 +1,11 @@
 # Theory of Algorithms - MD5 Message-Digest Algorithm
 ###### David Gallagher
-### Project Specs
+## Project Specs
 Write a program in the C programming language that calculates the MD5 hash digest of an input.
 The algorithm is specified in the [Request For Comments 1321](https://tools.ietf.org/html/rfc1321) document supplied by the Internet Engineering Task Force.
 
-### Project Overview
-#### Encryption Overview
+## Project Overview
+### Encryption Overview
 In [cryptography](https://en.wikipedia.org/wiki/Cryptography), encryption is the process of encoding a message or data 
 in such a way that only authorized parties can access it and those who are not authorized cannot. It is also used as a means 
 to store sensitive information, for example user passwords, such as to keep the passwords obfuscated and protected from malicious attacks. 
@@ -24,7 +24,7 @@ This will save some space in the generated data stored, for example in a databas
 
 __MD5__ is one such encryption algorithm that was used in the past to safeguard against such attacks but in the last 20-30 
 years it has been found to be vulnerable to certain attacks which can lead to security breaches.   
-#### MD5 Encryption
+### MD5 Encryption
 MD5 was initially designed by Ronald Rivest in 1992, to be used as a cryptographic hash function, suitable for use in cryptography.
 The purpose of the MD5 is to take an input of a fixed arbitrary size and compute a hash of 128 bits, described as a 'fingerprint' 
 or 'message digest'.  
@@ -42,7 +42,7 @@ it is possible to produce two files with the same hash which in turn compromises
 Today, the MD5 hash algorithm is still in use as a checksum to verify the integrity of a file but is no longer used as a 
 means to store cryptographically secure passwords or other sensitive data. 
 
-#### Some thoughts on [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)
+### Some thoughts on [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)
 RFC 1321 describes the MD5 message-digest algorithm.
 As with any one way hash algorithm, it postulates that it is computationally infeasible to reverse this hash. Similarly 
 it is infeasible to produce two messages having the same message digest. 
@@ -52,7 +52,7 @@ compute the hash of the target input, it should also not be too fast as this wou
 - It should also be noted that given even any input, it would require 2^128 operations to generate every possible 
 output for that input, hence the reference to computational infeasibility.
 
-##### Integer Literals
+#### Integer Literals
 The implementation of MD5 in C, uses integer literals for padding blocks of data.
 ```c
 static unsigned char PADDING[64] = {
@@ -79,14 +79,14 @@ Hexadecimal 0x80 [explained in a little more detail](https://www.ibm.com/support
 > followed by any combination of the digits 0 through 9 and the letters a through f or A through F.  
 > The letters A (or a) through F (or f) represent the values 10 through 15, respectively."  
  
-##### *Why* use the sin function in step 4?
+#### *Why* use the sin function in step 4?
 The sine function is used to construct the 64 element table. This is referred to as 
 [nothing-up-my-slieve numbers](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number), which are an agreed upon 
 standard in cryptography, and verify that there are no malicious intentions involved in the algorithm. If everyone can see 
 the operations being performed, and everyone can test the algorithm, try to break it, and can not find a vulnerability, then
 it is deemed that the algorithm is robust and safe for use. It is important that there is a consensus on why a constant 
 is used, to defend the integrity of the algorithm.
-##### Independent and Unbiased bits
+#### Independent and Unbiased bits
 Step 4. Process Message in 16-Word Blocks:
 > "It is interesting to note that if the bits of X, Y, and Z are independent and unbiased,  
 > the each bit of F(X,Y,Z) will be independent and unbiased." 
@@ -100,7 +100,7 @@ MD5 produces a 16 byte hash (128 bits). The chance of a given hash output/digest
 [This](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html) blog explains a little more detail about the size of
 2^128, it's a big number, 1/(2^128) is tiny.
 
-##### Endianness
+#### Endianness
 Are your significant bits on the left or the right..?  
 
 __Big Endian Byte Order:__   
@@ -119,7 +119,7 @@ Fortunately flipping bits from big to little, or little to big endian is a well 
 and [bswap_32](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/2900f564e15ef756bd8442136a8bba5dc1571cf3/MD5/main.c#L112) 
 to work around the functionality provided in byteswap.h.
 
-##### Conclusion
+#### Conclusion
 In conclusion, MD5 fulfills the requirements of a hashing algorithm with one exception, and is no longer considered safe 
 for use with passwords. It is possible for a third party to [generate 2 messages](https://www.mscs.dal.ca/~selinger/md5collision/), 
 that both hash to the same value.  
