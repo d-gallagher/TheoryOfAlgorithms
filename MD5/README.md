@@ -103,18 +103,20 @@ MD5 produces a 16 byte hash (128 bits). The chance of a given hash output/digest
 #### Endianness
 Are your significant bits on the left or the right..?  
 
-__Big Endian Byte Order:__   
+#####__Big Endian Byte Order:__   
 The most significant byte (the "big end") of the data is placed at the byte with the lowest address.  
 The rest of the data is placed in order in the next three bytes in memory.  
-__Little Endian Byte Order:__   
+#####__Little Endian Byte Order:__   
 The least significant byte (the "little end") of the data is placed at the byte with the lowest address. 
 The rest of the data is placed in order in the next three bytes in memory.
 
-As I am developing this on windows using Clion, as opposed to a Linux environment, I will not be using the 
-[<byteswap.h>](https://sites.uclouvain.be/SystInfo/usr/include/bits/byteswap.h.html) library for flipping the bits. 
+I am developing this on windows using [Clion](https://www.jetbrains.com/clion/) rather than in a Linux environment. 
+I will not be using the [<byteswap.h>](https://sites.uclouvain.be/SystInfo/usr/include/bits/byteswap.h.html) library for 
+flipping the bits to accommodate endianness. 
 
 [MINGW](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html) does not facilitate the byteswap.h library. 
-Fortunately flipping bits from big to little, or little to big endian is a well documented topic. I have included functions
+Fortunately flipping bits from big to little, or little to big endian is a well documented topic and solutions are abundant. 
+I have included functions
 [swap-endianness](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/dcc3798f79ecd054fd5359dcdad27d8eba1bf906/MD5/main.c#L73), 
 and [bswap_32](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/2900f564e15ef756bd8442136a8bba5dc1571cf3/MD5/main.c#L112) 
 to work around the functionality provided in byteswap.h.

@@ -122,6 +122,11 @@ uint64_t bswap_64( uint64_t val )
     return (val << 32) | (val >> 32);
 }
 
+/**
+ *
+ * @param M
+ * @param H
+ */
 void nexthash(union BLOCK *M, WORD *H)
 {
     WORD a = H[0], b = H[1], c = H[2], d = H[3];
@@ -205,6 +210,68 @@ void nexthash(union BLOCK *M, WORD *H)
     H[3] += d;
 }
 
+/**
+ *
+ * @param M
+ * @param inFile
+ * @param numbits
+ * @param status
+ * @return
+ */
+int nextBlock(union BLOCK *M, FILE *inFile, uint64_t *numbits, PADFLAG *status)
+{
+    // Exit when padding is complete - Finish
+    if ( *status == FINISH){ return 0; }
+
+    // pad message with 0's to the end of the block
+    if(*status == PAD0) {
+        for (int i = 0; i < 56; i++) {
+            M->eight[i] = 0x00;
+        }
+        M->sixfour[7] = *numbits;
+        // Set padding status to FINISH
+        *status = FINISH;
+    }
+
+    // Read in 64 * 1 byte items from infile and store in M.eight
+    size_t numbytesread = fread(M->eight, 1, 64, inFile);
+    // Count how many bits we read in
+    *numbits += (8ULL * ((uint64_t) numbytesread));
+
+    // There's enough space in the block to append 1 and finish padding
+    if (numbytesread < 56)
+    {
+        // Append 1 bit to block
+        M->eight[numbytesread] = 0x80;
+
+        // pad block with zeros
+        for(int i = numbytesread + 1; i < 56; i++)
+        {
+            M->eight[i] = 0x00;
+        }
+        // Append final byte (Original message length)
+        M->sixfour[7] = *numbits;
+        // Exit when padding is complete - Finish
+        *status = FINISH;
+        return 1;
+    }
+
+    // Not enough space tom complete padding in block
+    // Append 1 to current block and pad zeros to end of block
+    else if(numbytesread < 64)
+    {
+        // Append 1 bit to block
+        M->eight[numbytesread] = 0x80;
+        for (int i = numbytesread + 1; i < 64; i++)
+        {
+            M->eight[i] = 0x00;
+        }
+        // Swap to PAD0 and fill last block with padding.
+        *status = PAD0;
+    }
+
+    return 1;
+}
 
 int main(int argc, char *argv[]) {
     printf("System is %s-endian.\n",
@@ -223,6 +290,19 @@ int main(int argc, char *argv[]) {
     }
 
     WORD H[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
+
+
+    // The current padded message block.
+    union BLOCK M;
+    uint64_t numbits = 0;
+    enum flag status = READ;
+
+
+    while(nextBlock(&M, infile, &numbits, &status))
+    {
+        nexthash(&M, H);
+    }
+
 
     printf("Empty String MD5:\nd41d8cd98f00b204e9800998ecf8427e\n");
     printf("No bswap test\n");
