@@ -59,10 +59,12 @@ void II(WORD *a, WORD b, WORD c, WORD d, WORD x, WORD s, WORD ac){
     *a = b + ROTATE_LEFT(*a, s);
 }
 
-// A sixty-four byte block of memory, accessed with different types.
-// Represents the current block which has been read from the padded message
-// The Union will consume 64 bytes of memory
-// Can be read as an array of 64, 32 or 8 bit integers
+/**
+ * A sixty-four byte block of memory, accessed with different types.
+ * Represents the current block which has been read from the padded message
+ * The Union will consume 64 bytes of memory
+ * Can be read as an array of 64, 32 or 8 bit integers
+ */
 union BLOCK
 {
     uint64_t sixfour[8];
@@ -70,60 +72,50 @@ union BLOCK
     uint8_t eight[64];
 };
 
-// Flags represent the four different states that next block may encounter:
-// READ   - Still reading file
-// PAD0   - (Not enough space to complete the padding in the current block but the 1 bit has been appended already)
-// FINISH - Padding is complete.
+/**
+ * Flags represent the four different states that next block may encounter:
+ * READ   - Still reading file
+ * PAD0   - (Not enough space to complete the padding in the current block but the 1 bit has been appended already)
+ * FINISH - Padding is complete.
+*/
 typedef enum {READ, PAD0, FINISH} PADFLAG;
+/**
+ * BIG    - System is big endian
+ * LITTLE - System is little endian
+*/
 typedef enum {BIG, LITTLE} ENDIAN;
 
-// Check endianness of machine
+/**
+ * Check endianness of machine
+ * e.c = 0001 (LITTLE endian) or 1000 (BIG endian)
+ * @return 0 or 1
+ */
 int is_big_endian(void)
 {
     union {
         uint32_t i;
         char c[4];
     } e = { 0x01000000 };
-
     return e.c[0];
 }
 
-// MD5 specifies big endian byte order, but this implementation assumes a little
-// endian byte order CPU. swap_endianness will swap from big-little or little-big
-uint64_t  swap_endianness(uint64_t x){
 
-    uint64_t mask[8];
-    mask[0] = 0xff;
-    for (int i = 1; i < 8; i++) {
-        mask[i] = mask[0] << (8 * i);
-    }
-    uint64_t y =    (x >> 56) & mask[0]
-                    ^ ((x >> 40) & mask[1])
-                    ^ ((x >> 24) & mask[2])
-                    ^ ((x >>  8) & mask[3])
-                    ^ ((x <<  8) & mask[4])
-                    ^ ((x << 24) & mask[5])
-                    ^ ((x << 40) & mask[6])
-                    ^ ((x << 56) & mask[7]);
-
-    return y;
-}
-// Byte swap unsigned int Big to little endian
+/**
+ * MD5 specifies big endian byte order, but this implementation assumes a little
+ * endian byte order CPU. swap_endianness will swap from big-little or little-big
+ * Byte swap unsigned int Big to little endian
+ * @param val
+ * @return
+ */
 uint32_t bswap_32( uint32_t val )
 {
     val = ((val << 8) & 0xFF00FF00 ) | ((val >> 8) & 0xFF00FF );
     return (val << 16) | (val >> 16);
 }
 
-uint64_t bswap_64( uint64_t val )
-{
-    val = ((val << 8) & 0xFF00FF00FF00FF00ULL ) | ((val >> 8) & 0x00FF00FF00FF00FFULL );
-    val = ((val << 16) & 0xFFFF0000FFFF0000ULL ) | ((val >> 16) & 0x0000FFFF0000FFFFULL );
-    return (val << 32) | (val >> 32);
-}
 
 /**
- *
+ * MD5 basic transformation. Transforms state based on block (RFC Comment - update description)
  * @param M
  * @param H
  */
@@ -211,7 +203,7 @@ void nexthash(union BLOCK *M, WORD *H)
 }
 
 /**
- *
+ * Process the blocks from the message input.
  * @param M
  * @param inFile
  * @param numbits
@@ -303,30 +295,18 @@ int main(int argc, char *argv[]) {
         nexthash(&M, H);
     }
 
-
     printf("Empty String MD5:\nd41d8cd98f00b204e9800998ecf8427e\n");
-    printf("No bswap test\n");
-    for (int i = 0; i < 4; i++){
-        printf("%08" PRIx32 "", H[i]);
-    }
-    printf("\n");
+
 
     printf("bswap_32 test \n");
     for (int i = 0; i < 4; i++){
         printf("%08" PRIx32 "", bswap_32(H[i]));
     }
     printf("\n");
-    printf("bswap_64 test \n");
-
+    printf("bswap_32 test \n");
     for (int i = 0; i < 4; i++){
-        printf("%08" PRIx32 "", bswap_64(H[i]));
+        printf("%08" PRIx32 "", bswap_32(H[i]));
     }
-    printf("\n");
-    printf("swap_endianness test \n");
-    for (int i = 0; i < 4; i++){
-        printf("%08" PRIx32 "", swap_endianness(H[i]));
-    }
-    printf("\n");
 
     fclose(infile);
     return 0;
