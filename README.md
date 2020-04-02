@@ -1,7 +1,7 @@
 # TheoryOfAlgorithms - Main Page
 ###### Lecturer: Ian McLoughlin
-This repository is a record of course work during the Theory of Algorithms module.  
 An introduction to the theory of algorithms, especially the areas of computation and computability.
+This repository is a record of course work during the Theory of Algorithms module.  
 #### Learning Outcomes 
 * Compare different models of computation.
 * Write computer programs using a selection of programming paradigms.
