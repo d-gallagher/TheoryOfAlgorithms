@@ -42,6 +42,48 @@ it is possible to produce two files with the same hash which in turn compromises
 Today, the MD5 hash algorithm is still in use as a checksum to verify the integrity of a file but is no longer used as a 
 means to store cryptographically secure passwords or other sensitive data. 
 
+### MD5 Algorithm
+MD5 takes a message or input of arbitrary length and outputs a 128-bit digest or hash of that input.  
+The algorithm can be broken into 5 Steps: 
+* Appending Padding Bits:
+```
+The input is broken into 512-bit blocks.  
+The message is then padded such that the message length is divisible by 512, the final block in the message will be 
+padded with zero's so that its length (in bits) is congruent to 448, modulo 512.  
+Padding will always be performed on any input, even if the input already meets the expected congruency of 448 modulo 512.  
+Padding is performed as follows: 
+* A single "1" bit is appended to the message. 
+* "0" bits are appended such that the length in bits of the padded message becomes congruent to 448, modulo 512. 
+* A minimum total of one bit and maximum of 512 bits are appended.
+```
+* Appending Length:
+```
+A 64-bit representation of the input is appended to the result of step 1. 
+The resulting message has a length that is an exact multiple of 512 bits.  
+Equivalently, this message has a length that is an exact multiple of 16 (32-bit) words.
+```
+* Initialize MD Buffer:
+```
+A four-word buffer (A,B,C,D) is used to compute the message digest.  
+Here each of A, B, C, D is a 32-bit register.  
+These registers are initialized to the following values in hexadecimal, low-order bytes first:  
+
+word A: 01 23 45 67
+word B: 89 ab cd ef
+word C: fe dc ba 98
+word D: 76 54 32 10
+```
+* Process input in 16-Word blocks:
+```
+Processing Message in 512-bit Blocks.  
+Loop through the padded and appended message in blocks of 512 bits each.   
+For each input block, 4 rounds of operations are performed with 16 operations in each round.
+```
+* Output 128-bit message digest:
+```
+The contents in buffer words A, B, C, D are returned in sequence with low-order byte first.
+```
+
 ### Some thoughts on [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)
 RFC 1321 describes the MD5 message-digest algorithm.
 As with any one way hash algorithm, it postulates that it is computationally infeasible to reverse this hash. Similarly 
@@ -137,3 +179,18 @@ __MD5 fails:__
 - __Collision Resistance:__  
 How hard is it for someone to find two messages (any two messages) that hash the same.
 
+### References
+[Request For Comments 1321](https://tools.ietf.org/html/rfc1321)  
+[Wikipedia - Cryptography](https://en.wikipedia.org/wiki/Cryptography)  
+[Wikipedia - MD5 Message Digest](https://en.wikipedia.org/wiki/MD5)  
+[Vulnerability of data security using MD5 function in php database design](hhttps://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design)  
+[Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)  
+[IBM - Integer literals in C](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.cbclx01/lit_integer.htm#lit_integer__hexintlit)  
+[Wikipedia - Nothing-up-my-slieve numbers](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)  
+[How big is 2**128? - Blog about how big the bits get!](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html)  
+[Clion - IDE](https://www.jetbrains.com/clion/)  
+[Endian lib in C <byteswap.h>](https://sites.uclouvain.be/SystInfo/usr/include/bits/byteswap.h.html)  
+[Wikipedia - Endianness](https://en.wikipedia.org/wiki/Endianness)  
+[StackOverflow - Big vs Little Endian](https://stackoverflow.com/a/701644)  
+[MINGW - Windows compiler for C](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html)  
+[MD5 Collision Demo](https://www.mscs.dal.ca/~selinger/md5collision/)  
