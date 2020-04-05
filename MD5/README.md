@@ -76,12 +76,15 @@ The algorithm can be broken into 5 Steps:
 * Appending Padding Bits:
 ```
 The input is broken into 512-bit blocks.  
-The message is then padded such that the message length is divisible by 512, the final block in the message will be 
-padded with zero's so that its length (in bits) is congruent to 448, modulo 512.  
-Padding will always be performed on any input, even if the input already meets the expected congruency of 448 modulo 512.  
+The message is then padded such that the message length is divisible by 512, 
+the final block in the message will be padded with zero's so that its length (in bits) 
+is congruent to 448, modulo 512.  
+Padding will always be performed on any input, even if the input already meets the expected 
+congruency of 448 modulo 512.  
 Padding is performed as follows: 
 * A single "1" bit is appended to the message. 
-* "0" bits are appended such that the length in bits of the padded message becomes congruent to 448, modulo 512. 
+* "0" bits are appended such that the length in bits of the padded message becomes 
+  congruent to 448, modulo 512. 
 * A minimum total of one bit and maximum of 512 bits are appended.
 ```
 * Appending Length:
@@ -211,7 +214,7 @@ How hard is it for someone to find two messages (any two messages) that hash the
 [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)  
 [Wikipedia - Cryptography](https://en.wikipedia.org/wiki/Cryptography)  
 [Wikipedia - MD5 Message Digest](https://en.wikipedia.org/wiki/MD5)  
-[Vulnerability of data security using MD5 function in php database design](hhttps://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design)  
+[Vulnerability of data security using MD5 function in php database design ](https://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design)  
 [Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)  
 [IBM - Integer literals in C](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.cbclx01/lit_integer.htm#lit_integer__hexintlit)  
 [Wikipedia - Nothing-up-my-slieve numbers](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)  
