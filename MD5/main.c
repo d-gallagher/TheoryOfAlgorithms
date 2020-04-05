@@ -60,8 +60,9 @@ uint32_t bswap_32( uint32_t val )
 
 /**
  * MD5 basic transformation. Transforms state based on block (RFC Comment - update description)
- * @param M
- * @param H
+ * Each round performs 16 operations
+ * @param M - union block
+ * @param H - 32 bit unsigned integer
  */
 void nexthash(union BLOCK *M, WORD *H)
 {
@@ -238,16 +239,8 @@ int main(int argc, char *argv[]) {
     {
         nexthash(&M, H);
     }
-
-    printf("Empty String MD5:\nd41d8cd98f00b204e9800998ecf8427e\n");
-
-
-    printf("bswap_32 test \n");
-    for (int i = 0; i < 4; i++){
-        printf("%08" PRIx32 "", bswap_32(H[i]));
-    }
-    printf("\n");
-    printf("bswap_32 test \n");
+    
+    printf("MD5 Output: \n");
     for (int i = 0; i < 4; i++){
         printf("%08" PRIx32 "", bswap_32(H[i]));
     }
