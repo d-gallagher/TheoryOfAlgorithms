@@ -232,14 +232,14 @@ int main(int argc, char *argv[]) {
     // The current padded message block.
     union BLOCK M;
     uint64_t numbits = 0;
-    enum flag status = READ;
+    enum PADFLAG status = READ;
 
 
     while(nextBlock(&M, infile, &numbits, &status))
     {
         nexthash(&M, H);
     }
-    
+
     printf("MD5 Output: \n");
     for (int i = 0; i < 4; i++){
         printf("%08" PRIx32 "", bswap_32(H[i]));
