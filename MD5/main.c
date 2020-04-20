@@ -226,29 +226,42 @@ void menu_no_args(){
 
     // Menu - User can perform MD5 message digest on a given string or file
     printf("The following commands may be used:\n");
-    printf("--help:         --> Prints help Menu.\n");
-    printf("--test:         --> Run tests to verify MD5 hash.\n");
-    printf("--check-endian: --> Check system endianness.\n");
-    printf("--string:       --> Type an input to hash.\n");
-    printf("--file:         --> Enter path/to/file.extension to hash.\n");
+    printf("--help                           --> Prints help Menu.\n");
+    printf("--test                           --> Run tests to verify MD5 hash.\n");
+    printf("--check-endian                   --> Check system endianness.\n");
+    printf("--string 'type your string'      --> Type an input to hash.\n");
+    printf("--file path/to/file.extension    --> Return the MD5 hash of file input.\n");
 }
 
 int main(int argc,char *argv[]) {
 
-//    // Debugging args
-//    int ctr;
-//    for( ctr=0; ctr < argc; ctr++ )
-//    {
-//        printf("Input %d: ",ctr);
-//        puts( argv[ctr] );
-//    }
 
-    // Check args
-    if (argc != 2) {
-        printf("Error: Expected input but none was entered..\n");
-        printf("Enter --help for assistance.\n");
-        return 1;
+    // Init Word Constants
+    WORD H[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
+
+
+    // The current padded message block.
+    union BLOCK M;
+    // Count the bits
+    uint64_t numbits = 0;
+    // Set the status flag
+    PADFLAG status = READ;
+
+
+    // Debugging args
+    int ctr;
+    for( ctr=0; ctr < argc; ctr++ )
+    {
+        printf("Input %d: ",ctr);
+        puts( argv[ctr] );
     }
+
+//    // Check args
+//    if (argc < 1) {
+//        printf("Error: Expected input but none was entered..\n");
+//        printf("Enter --help for assistance.\n");
+//        return 1;
+//    }
 
     // --help command
     if(argc == 2 && strcmp(argv[1], "--help")==0){
@@ -276,53 +289,44 @@ int main(int argc,char *argv[]) {
     }
 
     // --string command
-    if(argc == 2 && strcmp(argv[1], "--string")==0){
+    if(argc == 3 && strcmp(argv[1], "--string")==0){
         printf("Plaintext String: \n");
         printf("MD5 Hash        : \n");
         return 0;
     }
 
     // --file command
-    if(argc == 2 && strcmp(argv[1], "--file")==0){
-        printf("File Entered: 'path/to/file.file' \n");
-        printf("MD5 Hash    : 'hash_of_file_out_' \n");
-        return 0;
-    }
+    if(argc == 3 && strcmp(argv[1], "--file")==0){
 
-    // Open file and continue (return 1)
-    FILE *infile = fopen(argv[1], "rb");
-    if (!infile) {
-        printf("Error: couldn't open file %s.\n", argv[1]);
-        return 1;
-    }
+        printf("File Entered: %s\n", argv[2]);
+        // Open file and continue (return 1)
+        FILE *infile = fopen(argv[2], "rb");
+        if (!infile) {
+            printf("Error: couldn't open file %s.\n", argv[2]);
+            return 1;
+        }
 
-    // Init Word Constants
-    WORD H[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
+        // Process the input in blocks
+        while(nextBlock(&M, infile, &numbits, &status))
+        {
+            nexthash(&M, H);
+        }
 
 
-    // The current padded message block.
-    union BLOCK M;
-    // Count the bits
-    uint64_t numbits = 0;
-    // Set the status flag
-    PADFLAG status = READ;
+//        printf("MD5 Hash    : 'hash_of_file_out_' \n");
+        // Output the hash
+        printf("MD5 Output  : ");
+        for (int i = 0; i < 4; i++){
+            printf("%08" PRIx32 "", bswap_32(H[i]));
+        }
+        printf("\n" );
 
-    // Process the input in blocks
-    while(nextBlock(&M, infile, &numbits, &status))
-    {
-        nexthash(&M, H);
-    }
+        // Close the file
+        fclose(infile);
 
-    // Output the hash
-    printf("MD5 Output: \n");
-    for (int i = 0; i < 4; i++){
-        printf("%08" PRIx32 "", bswap_32(H[i]));
-    }
-    printf("\n" );
-
-    // Close the file
-    fclose(infile);
+    }// end --file
 
     // Terminate the program
+    printf("Terminating program..");
     return 0;
 }

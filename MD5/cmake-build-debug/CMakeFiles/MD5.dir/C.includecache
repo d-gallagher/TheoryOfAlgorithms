@@ -23,6 +23,10 @@ string.h
 -
 inttypes.h
 -
+Windows.h
+-
+unistd.h
+-
 constants.c
 C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/MD5/constants.c
 functions.c
