@@ -288,12 +288,63 @@ int main(int argc,char *argv[]) {
         return 0;
     }
 
-    // --string command
+    // --string command (write to file and process)
     if(argc == 3 && strcmp(argv[1], "--string")==0){
         printf("Plaintext String: \n");
-        printf("MD5 Hash        : \n");
-        return 0;
-    }
+//        printf("MD5 Hash        : \n");
+
+        // Plain text input
+        char* plaintext_string;
+        // Assign the input string to char pointer
+        plaintext_string = argv[2];
+
+        // Allocate string input to file
+        FILE* plaintext_file;
+        // set file path
+        char plaintext_file_path[] = "plaintext.txt";
+
+        // open file for write operations
+        plaintext_file = fopen(plaintext_file_path, "w");
+
+        // check file not null
+        if (plaintext_file == NULL)
+        {
+            printf("Error: could not store string input! Please try again.");
+            return 0;
+        }
+
+        // put the char contents to the file
+        fputs(plaintext_string, plaintext_file);
+
+        // close file
+        fclose(plaintext_file);
+
+        // Do MD5 op
+        FILE *infile = fopen("plaintext.txt", "rb");
+        if (!infile) {
+            printf("Error: An error occurred while processing the input string to file.\n");
+            return 1;
+        }
+
+        // Process the input in blocks
+        while(nextBlock(&M, infile, &numbits, &status))
+        {
+            nexthash(&M, H);
+        }
+
+
+//        printf("MD5 Hash    : 'hash_of_file_out_' \n");
+        // Output the hash
+        printf("MD5 Output  : ");
+        for (int i = 0; i < 4; i++){
+            printf("%08" PRIx32 "", bswap_32(H[i]));
+        }
+        printf("\n" );
+
+        // Close the file
+        fclose(infile);
+//        return 0;
+    }// end --string
 
     // --file command
     if(argc == 3 && strcmp(argv[1], "--file")==0){
@@ -329,4 +380,4 @@ int main(int argc,char *argv[]) {
     // Terminate the program
     printf("Terminating program..");
     return 0;
-}
+}// end main
