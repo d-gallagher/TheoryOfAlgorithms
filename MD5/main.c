@@ -226,23 +226,22 @@ void menu_no_args(){
 
     // Menu - User can perform MD5 message digest on a given string or file
     printf("The following commands may be used:\n");
-    printf("--help: Prints help Menu.\n");
-    printf("--test: Run tests to verify MD5 hash\n");
-    printf("--check-endian: Check system endianness\n");
-    printf("Alternatively, enter an input to hash the input.\n");
-    printf("Or add a file to hash a file.\n");
-
+    printf("--help:         --> Prints help Menu.\n");
+    printf("--test:         --> Run tests to verify MD5 hash.\n");
+    printf("--check-endian: --> Check system endianness.\n");
+    printf("--string:       --> Type an input to hash.\n");
+    printf("--file:         --> Enter path/to/file.extension to hash.\n");
 }
 
 int main(int argc,char *argv[]) {
 
-    // Debugging args
-    int ctr;
-    for( ctr=0; ctr < argc; ctr++ )
-    {
-        printf("Input %d: ",ctr);
-        puts( argv[ctr] );
-    }
+//    // Debugging args
+//    int ctr;
+//    for( ctr=0; ctr < argc; ctr++ )
+//    {
+//        printf("Input %d: ",ctr);
+//        puts( argv[ctr] );
+//    }
 
     // Check args
     if (argc != 2) {
@@ -272,8 +271,21 @@ int main(int argc,char *argv[]) {
 
     // --check-endian command
     if(argc == 2 && strcmp(argv[1], "--check-endian")==0){
-        printf("System is %s-endian.\n",
-               is_big_endian() ? "big" : "little");
+        printf("System is %s-endian.\n",is_big_endian() ? "big" : "little");
+        return 0;
+    }
+
+    // --string command
+    if(argc == 2 && strcmp(argv[1], "--string")==0){
+        printf("Plaintext String: \n");
+        printf("MD5 Hash        : \n");
+        return 0;
+    }
+
+    // --file command
+    if(argc == 2 && strcmp(argv[1], "--file")==0){
+        printf("File Entered: 'path/to/file.file' \n");
+        printf("MD5 Hash    : 'hash_of_file_out_' \n");
         return 0;
     }
 
