@@ -19,6 +19,8 @@ C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/MD5/unions.c
 C:/Users/jibis/Documents/College/ToA/TheoryOfAlgorithms/MD5/main.c
 stdio.h
 -
+string.h
+-
 inttypes.h
 -
 constants.c

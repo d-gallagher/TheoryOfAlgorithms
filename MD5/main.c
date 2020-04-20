@@ -3,10 +3,21 @@
 // David Gallagher.
 
 #include <stdio.h>
+#include <string.h>
 #include <inttypes.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
+
+// Custom
 #include "constants.c"
 #include "functions.c"
-
+void go_to_sleep(int seconds){
+    Sleep(seconds);
+}
 // Processing functions for:
 // Round 1
 void FF(WORD *a, WORD b, WORD c, WORD d, WORD x, WORD s, WORD ac){
@@ -210,41 +221,96 @@ int nextBlock(union BLOCK *M, FILE *inFile, uint64_t *numbits, PADFLAG *status)
     return 1;
 }
 
-int main(int argc, char *argv[]) {
-    printf("System is %s-endian.\n",
-           is_big_endian() ? "big" : "little");
+void menu_no_args(){
+    printf("=== MD5 Message Digest ===\n\n");
 
-    // Expect and open a single filename.
+    // Menu - User can perform MD5 message digest on a given string or file
+    printf("The following commands may be used:\n");
+    printf("--help: Prints help Menu.\n");
+    printf("--test: Run tests to verify MD5 hash\n");
+    printf("--check-endian: Check system endianness\n");
+    printf("Alternatively, enter an input to hash the input.\n");
+    printf("Or add a file to hash a file.\n");
+
+}
+
+int main(int argc,char *argv[]) {
+
+    // Debugging args
+    int ctr;
+    for( ctr=0; ctr < argc; ctr++ )
+    {
+        printf("Input %d: ",ctr);
+        puts( argv[ctr] );
+    }
+
+    // Check args
     if (argc != 2) {
-        printf("Error: expected single filename as argument.\n");
+        printf("Error: Expected input but none was entered..\n");
+        printf("Enter --help for assistance.\n");
         return 1;
     }
 
+    // --help command
+    if(argc == 2 && strcmp(argv[1], "--help")==0){
+        menu_no_args();
+        return 0;
+    }
+    // --test command
+    if(argc == 2 && strcmp(argv[1], "--test")==0){
+        printf("Testing...\n");
+        go_to_sleep(1000);
+        printf("Testing...\n");
+        go_to_sleep(1000);
+        printf("Testing...\n");
+        go_to_sleep(1000);
+        printf("Testing...\n");
+        go_to_sleep(1000);
+        printf("Testing Complete...");
+        return 0;
+    }
+
+    // --check-endian command
+    if(argc == 2 && strcmp(argv[1], "--check-endian")==0){
+        printf("System is %s-endian.\n",
+               is_big_endian() ? "big" : "little");
+        return 0;
+    }
+
+    // Open file and continue (return 1)
     FILE *infile = fopen(argv[1], "rb");
     if (!infile) {
         printf("Error: couldn't open file %s.\n", argv[1]);
         return 1;
     }
 
+    // Init Word Constants
     WORD H[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
 
 
     // The current padded message block.
     union BLOCK M;
+    // Count the bits
     uint64_t numbits = 0;
+    // Set the status flag
     PADFLAG status = READ;
 
-
+    // Process the input in blocks
     while(nextBlock(&M, infile, &numbits, &status))
     {
         nexthash(&M, H);
     }
 
+    // Output the hash
     printf("MD5 Output: \n");
     for (int i = 0; i < 4; i++){
         printf("%08" PRIx32 "", bswap_32(H[i]));
     }
     printf("\n" );
+
+    // Close the file
     fclose(infile);
+
+    // Terminate the program
     return 0;
 }
