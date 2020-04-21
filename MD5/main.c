@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
-
+#include <assert.h>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -229,16 +229,39 @@ void menu_no_args(){
     printf("--help                           --> Prints help Menu.\n");
     printf("--test                           --> Run tests to verify MD5 hash.\n");
     printf("--check-endian                   --> Check system endianness.\n");
+    printf("--version                        --> Check current version.\n");
     printf("--string 'type your string'      --> Type an input to hash.\n");
     printf("--file path/to/file.extension    --> Return the MD5 hash of file input.\n");
 }
 
-int main(int argc,char *argv[]) {
+void run_tests(){
+    printf("Testing...\n");
+    go_to_sleep(1000);
+    printf("Testing...\n");
+    go_to_sleep(1000);
+    printf("Testing...\n");
+    go_to_sleep(1000);
+    printf("Testing...\n");
+    go_to_sleep(1000);
+    printf("Testing Complete...");
+}
+//void debug_args(int argc, char *argv[]){
+//    int ctr;
+//    for( ctr=0; ctr < argc; ctr++ )
+//    {
+//        printf("Input %d: ",ctr);
+//        puts( argv[ctr] );
+//    }
+//}
 
-
+/**
+ * Take file input from command line.
+ * Process file and print MD5 hash.
+ * @param f
+ */
+void md5_file(FILE *f){
     // Init Word Constants
     WORD H[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
-
 
     // The current padded message block.
     union BLOCK M;
@@ -247,21 +270,69 @@ int main(int argc,char *argv[]) {
     // Set the status flag
     PADFLAG status = READ;
 
+    // Process the input in blocks
+    while(nextBlock(&M, f, &numbits, &status))
+    {
+        nexthash(&M, H);
+    }
+
+    // Output the hash
+    printf("MD5 Output  : ");
+    for (int i = 0; i < 4; i++){
+        printf("%08" PRIx32 "", bswap_32(H[i]));
+    }
+    printf("\n" );
+
+    // Close the file
+    fclose(f);
+}
+
+/**
+ * Take string input from command line.
+ * Parse into file for md5 processing.
+ * Save file and print MD5 hash.
+ * @param c
+ */
+void string_to_file(char* c){
+    // Allocate string input to file
+    FILE* plaintext_file;
+    // set file path
+    char plaintext_file_path[] = "plaintext.txt";
+
+    // open file for write operations
+    plaintext_file = fopen(plaintext_file_path, "w");
+
+    // check file not null
+    if (plaintext_file == NULL)
+    {
+        printf("Error: Unable to process input to file ");
+        exit(0);
+    }
+
+    // put the char contents to the file
+    fputs(c, plaintext_file);
+
+    // close file
+    fclose(plaintext_file);
+}
+
+int main(int argc,char *argv[]) {
 
     // Debugging args
     int ctr;
+    printf("argc %d: \n",argc);
     for( ctr=0; ctr < argc; ctr++ )
     {
         printf("Input %d: ",ctr);
-        puts( argv[ctr] );
+        printf("argv: %s\n", argv[ctr] );
     }
 
-//    // Check args
-//    if (argc < 1) {
-//        printf("Error: Expected input but none was entered..\n");
-//        printf("Enter --help for assistance.\n");
-//        return 1;
-//    }
+    // Check args
+    if (argc < 2) {
+        printf("Error: Expected input but none was entered..\n");
+        printf("Enter --help for assistance.\n");
+        return 1;
+    }
 
     // --help command
     if(argc == 2 && strcmp(argv[1], "--help")==0){
@@ -270,15 +341,7 @@ int main(int argc,char *argv[]) {
     }
     // --test command
     if(argc == 2 && strcmp(argv[1], "--test")==0){
-        printf("Testing...\n");
-        go_to_sleep(1000);
-        printf("Testing...\n");
-        go_to_sleep(1000);
-        printf("Testing...\n");
-        go_to_sleep(1000);
-        printf("Testing...\n");
-        go_to_sleep(1000);
-        printf("Testing Complete...");
+        run_tests();
         return 0;
     }
 
@@ -288,96 +351,38 @@ int main(int argc,char *argv[]) {
         return 0;
     }
 
+    // --version command
+    if(argc == 2 && strcmp(argv[1], "--version")==0){
+        printf("MD5 - Version 1.01\n");
+        return 0;
+    }
     // --string command (write to file and process)
     if(argc == 3 && strcmp(argv[1], "--string")==0){
-        printf("Plaintext String: \n");
-//        printf("MD5 Hash        : \n");
-
-        // Plain text input
-        char* plaintext_string;
-        // Assign the input string to char pointer
-        plaintext_string = argv[2];
-
-        // Allocate string input to file
-        FILE* plaintext_file;
-        // set file path
-        char plaintext_file_path[] = "plaintext.txt";
-
-        // open file for write operations
-        plaintext_file = fopen(plaintext_file_path, "w");
-
-        // check file not null
-        if (plaintext_file == NULL)
-        {
-            printf("Error: could not store string input! Please try again.");
-            return 0;
-        }
-
-        // put the char contents to the file
-        fputs(plaintext_string, plaintext_file);
-
-        // close file
-        fclose(plaintext_file);
-
-        // Do MD5 op
+        // parse input string to file
+        string_to_file(argv[2]);
+        // Open new file and continue (return 1)
         FILE *infile = fopen("plaintext.txt", "rb");
         if (!infile) {
             printf("Error: An error occurred while processing the input string to file.\n");
             return 1;
         }
-
-        // Process the input in blocks
-        while(nextBlock(&M, infile, &numbits, &status))
-        {
-            nexthash(&M, H);
-        }
-
-
-//        printf("MD5 Hash    : 'hash_of_file_out_' \n");
-        // Output the hash
-        printf("MD5 Output  : ");
-        for (int i = 0; i < 4; i++){
-            printf("%08" PRIx32 "", bswap_32(H[i]));
-        }
-        printf("\n" );
-
-        // Close the file
-        fclose(infile);
-//        return 0;
+        md5_file(infile);
     }// end --string
 
-    // --file command
+    // --file command (process input file)
     if(argc == 3 && strcmp(argv[1], "--file")==0){
-
-        printf("File Entered: %s\n", argv[2]);
-        // Open file and continue (return 1)
         FILE *infile = fopen(argv[2], "rb");
         if (!infile) {
             printf("Error: couldn't open file %s.\n", argv[2]);
             return 1;
         }
-
-        // Process the input in blocks
-        while(nextBlock(&M, infile, &numbits, &status))
-        {
-            nexthash(&M, H);
-        }
-
-
-//        printf("MD5 Hash    : 'hash_of_file_out_' \n");
-        // Output the hash
-        printf("MD5 Output  : ");
-        for (int i = 0; i < 4; i++){
-            printf("%08" PRIx32 "", bswap_32(H[i]));
-        }
-        printf("\n" );
-
-        // Close the file
-        fclose(infile);
-
+        md5_file(infile);
     }// end --file
 
     // Terminate the program
     printf("Terminating program..");
     return 0;
 }// end main
+
+
+
