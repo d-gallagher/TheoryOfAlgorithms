@@ -220,7 +220,9 @@ int nextBlock(union BLOCK *M, FILE *inFile, uint64_t *numbits, PADFLAG *status)
 
     return 1;
 }
-
+/**
+ * Print --help menu
+ */
 void menu_no_args(){
     printf("=== MD5 Message Digest ===\n\n");
 
@@ -233,7 +235,10 @@ void menu_no_args(){
     printf("--string 'type your string'      --> Type an input to hash.\n");
     printf("--file path/to/file.extension    --> Return the MD5 hash of file input.\n");
 }
-
+/**
+ * Run tests to validate the MD5 calculates and outputs the correct encodings.
+ *
+ */
 void run_tests(){
     printf("Testing...\n");
     go_to_sleep(1000);
@@ -245,14 +250,6 @@ void run_tests(){
     go_to_sleep(1000);
     printf("Testing Complete...");
 }
-//void debug_args(int argc, char *argv[]){
-//    int ctr;
-//    for( ctr=0; ctr < argc; ctr++ )
-//    {
-//        printf("Input %d: ",ctr);
-//        puts( argv[ctr] );
-//    }
-//}
 
 /**
  * Take file input from command line.
@@ -277,11 +274,34 @@ void md5_file(FILE *f){
     }
 
     // Output the hash
+    unsigned char block1[9];
+    unsigned char block2[9];
+    unsigned char block3[9];
+    unsigned char block4[9];
+
     printf("MD5 Output  : ");
     for (int i = 0; i < 4; i++){
         printf("%08" PRIx32 "", bswap_32(H[i]));
     }
+
+    snprintf(block1, 9, "%08x" PRIx32 "", bswap_32(H[0]));
+    snprintf(block2, 9, "%08x" PRIx32 "", bswap_32(H[1]));
+    snprintf(block3, 9, "%08x" PRIx32 "", bswap_32(H[2]));
+    snprintf(block4, 9, "%08x" PRIx32 "", bswap_32(H[3]));
     printf("\n" );
+    printf("snprintf    : %s", block1);
+    printf("%s", block2);
+    printf("%s", block3);
+    printf("%s", block4);
+    printf("\n" );
+
+    char finalOut[32];
+    strncpy(finalOut, block1, 9);//finalOut += block1;
+    strncat(finalOut, block2, 9);//finalOut += block1;
+    strncat(finalOut, block3, 9);//finalOut += block1;
+    strncat(finalOut, block4, 9);//finalOut += block1;
+    printf("Output Str  : %s\n", finalOut);
+//
 
     // Close the file
     fclose(f);
