@@ -253,10 +253,12 @@ void run_tests(){
 
 /**
  * Take file input from command line.
- * Process file and print MD5 hash.
+ * Process file
+ * Return MD5 hash as char array.
  * @param f
+ * @return char*
  */
-void md5_file(FILE *f){
+char* md5_file(FILE *f){
     // Init Word Constants
     WORD H[] = { 0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476 };
 
@@ -279,32 +281,34 @@ void md5_file(FILE *f){
     unsigned char block3[9];
     unsigned char block4[9];
 
-    printf("MD5 Output  : ");
-    for (int i = 0; i < 4; i++){
-        printf("%08" PRIx32 "", bswap_32(H[i]));
-    }
+//    printf("MD5 Output  : ");
+//    for (int i = 0; i < 4; i++){
+//        printf("%08" PRIx32 "", bswap_32(H[i]));
+//    }
 
     snprintf(block1, 9, "%08x" PRIx32 "", bswap_32(H[0]));
     snprintf(block2, 9, "%08x" PRIx32 "", bswap_32(H[1]));
     snprintf(block3, 9, "%08x" PRIx32 "", bswap_32(H[2]));
     snprintf(block4, 9, "%08x" PRIx32 "", bswap_32(H[3]));
-    printf("\n" );
-    printf("snprintf    : %s", block1);
-    printf("%s", block2);
-    printf("%s", block3);
-    printf("%s", block4);
-    printf("\n" );
+//    printf("\n" );
+//    printf("snprintf    : %s", block1);
+//    printf("%s", block2);
+//    printf("%s", block3);
+//    printf("%s", block4);
+//    printf("\n" );
 
-    char finalOut[32];
+    char* finalOut = malloc(32);
     strncpy(finalOut, block1, 9);//finalOut += block1;
     strncat(finalOut, block2, 9);//finalOut += block1;
     strncat(finalOut, block3, 9);//finalOut += block1;
     strncat(finalOut, block4, 9);//finalOut += block1;
-    printf("Output Str  : %s\n", finalOut);
+//    printf("Output Str  : %s\n", finalOut);
 //
 
     // Close the file
     fclose(f);
+
+    return finalOut;
 }
 
 /**
@@ -386,7 +390,8 @@ int main(int argc,char *argv[]) {
             printf("Error: An error occurred while processing the input string to file.\n");
             return 1;
         }
-        md5_file(infile);
+        char* c = md5_file(infile);
+        printf("Output Str  : %s\n", c);
     }// end --string
 
     // --file command (process input file)
@@ -396,7 +401,8 @@ int main(int argc,char *argv[]) {
             printf("Error: couldn't open file %s.\n", argv[2]);
             return 1;
         }
-        md5_file(infile);
+        char* c = md5_file(infile);
+        printf("Output Str  : %s\n", c);
     }// end --file
 
     // Terminate the program
