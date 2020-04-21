@@ -36,3 +36,13 @@ const uint32_t K[64] = {
         0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
         0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
         0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};
+
+const char* MD5_Test_Outputs[7] = {
+        "d41d8cd98f00b204e9800998ecf8427e",
+        "0cc175b9c0f1b6a831c399e269772661",
+        "900150983cd24fb0d6963f7d28e17f72",
+        "f96b697d7cb7938d525a2f31aaf161d0",
+        "c3fcd3d76192e4007dfb496cca67e13b",
+        "d174ab98d277d9f5a5611c2c9f419d9f",
+        "57edf4a22be3c955ac49da2e2107b67a"
+};

@@ -54,7 +54,6 @@ int is_big_endian(void)
     return e.c[0];
 }
 
-
 /**
  * MD5 specifies big endian byte order, but this implementation assumes a little
  * endian byte order CPU. swap_endianness will swap from big-little or little-big
@@ -237,14 +236,32 @@ void menu_no_args(){
 }
 /**
  * Run tests to validate the MD5 calculates and outputs the correct encodings.
- *
+ * MD5 Test Suite taken from RFC1321
+ * MD5 input                                                                          = MD5 encoding
+ * ""                                                                                 = d41d8cd98f00b204e9800998ecf8427e
+ * "a"                                                                                = 0cc175b9c0f1b6a831c399e269772661
+ * "abc"                                                                              = 900150983cd24fb0d6963f7d28e17f72
+ * "message digest"                                                                   = f96b697d7cb7938d525a2f31aaf161d0
+ * "abcdefghijklmnopqrstuvwxyz"                                                       = c3fcd3d76192e4007dfb496cca67e13b
+ * "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"                   = d174ab98d277d9f5a5611c2c9f419d9f
+ * "12345678901234567890123456789012345678901234567890123456789012345678901234567890" = 57edf4a22be3c955ac49da2e2107b67a
  */
 void run_tests(){
-    printf("Testing...\n");
+    printf("== Running MD5 Test Suite ==\n");
     go_to_sleep(1000);
-    printf("Testing...\n");
+    printf("Test 0...\n");
+        printf("MD5 Test 0  : %s\n", MD5_Test_Outputs[0]);
+        FILE* Test1 = getFile("Test1.txt");
+        char* t0 = md5_file(Test1);
+        printf("Output Str  : %s\n", t0);
+        printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[0], t0)==0? "true":"false");
     go_to_sleep(1000);
-    printf("Testing...\n");
+    printf("Test 1...\n");
+        printf("MD5 Test 1  : %s\n", MD5_Test_Outputs[1]);
+        FILE* Test2 = getFile("Test2.txt");
+        char* t1 = md5_file(Test2);
+        printf("Output Str  : %s\n", t1);
+        printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[1], t1)==0? "true":"false");
     go_to_sleep(1000);
     printf("Testing...\n");
     go_to_sleep(1000);
@@ -254,6 +271,7 @@ void run_tests(){
 /**
  * Take file input from command line.
  * Process file
+ * Closes file
  * Return MD5 hash as char array.
  * @param f
  * @return char*
@@ -340,16 +358,26 @@ void string_to_file(char* c){
     fclose(plaintext_file);
 }
 
+FILE * getFile(char* c){
+    FILE *infile = NULL;
+//    printf("Opening File: %s\n", c);
+    infile = fopen(c, "rb");
+    if (!infile) {
+        printf("Error: An error occurred while processing the input string to file.\n");
+        return NULL;
+    }
+    return infile;
+}
 int main(int argc,char *argv[]) {
 
-    // Debugging args
-    int ctr;
-    printf("argc %d: \n",argc);
-    for( ctr=0; ctr < argc; ctr++ )
-    {
-        printf("Input %d: ",ctr);
-        printf("argv: %s\n", argv[ctr] );
-    }
+//    // Debugging args
+//    int ctr;
+//    printf("argc %d: \n",argc);
+//    for( ctr=0; ctr < argc; ctr++ )
+//    {
+//        printf("Input %d: ",ctr);
+//        printf("argv: %s\n", argv[ctr] );
+//    }
 
     // Check args
     if (argc < 2) {
@@ -385,22 +413,24 @@ int main(int argc,char *argv[]) {
         // parse input string to file
         string_to_file(argv[2]);
         // Open new file and continue (return 1)
-        FILE *infile = fopen("plaintext.txt", "rb");
-        if (!infile) {
-            printf("Error: An error occurred while processing the input string to file.\n");
-            return 1;
-        }
+//        FILE *infile = fopen("plaintext.txt", "rb");
+//        if (!infile) {
+//            printf("Error: An error occurred while processing the input string to file.\n");
+//            return 1;
+//        }
+        FILE* infile = getFile("plaintext.txt");
         char* c = md5_file(infile);
         printf("Output Str  : %s\n", c);
     }// end --string
 
     // --file command (process input file)
     if(argc == 3 && strcmp(argv[1], "--file")==0){
-        FILE *infile = fopen(argv[2], "rb");
-        if (!infile) {
-            printf("Error: couldn't open file %s.\n", argv[2]);
-            return 1;
-        }
+//        FILE *infile = fopen(argv[2], "rb");
+//        if (!infile) {
+//            printf("Error: couldn't open file %s.\n", argv[2]);
+//            return 1;
+//        }
+        FILE* infile = getFile(argv[2]);
         char* c = md5_file(infile);
         printf("Output Str  : %s\n", c);
     }// end --file
