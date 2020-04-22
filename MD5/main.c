@@ -219,6 +219,7 @@ int nextBlock(union BLOCK *M, FILE *inFile, uint64_t *numbits, PADFLAG *status)
 
     return 1;
 }
+
 /**
  * Print --help menu
  */
@@ -248,23 +249,62 @@ void menu_no_args(){
  */
 void run_tests(){
     printf("== Running MD5 Test Suite ==\n");
-    go_to_sleep(1000);
+    /**================================== TEST 0 =======================================*/
+    go_to_sleep(500);
     printf("Test 0...\n");
-        printf("MD5 Test 0  : %s\n", MD5_Test_Outputs[0]);
-        FILE* Test1 = getFile("Test1.txt");
-        char* t0 = md5_file(Test1);
-        printf("Output Str  : %s\n", t0);
-        printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[0], t0)==0? "true":"false");
-    go_to_sleep(1000);
+    printf("MD5 Test 0  : %s\n", MD5_Test_Outputs[0]);
+    FILE* Test0 = getFile("Test0.txt");
+    char* t0 = md5_file(Test0);
+    printf("Output Str  : %s\n", t0);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[0], t0)==0? "true":"false");
+    /**================================== TEST 1 =======================================*/
+    go_to_sleep(500);
     printf("Test 1...\n");
-        printf("MD5 Test 1  : %s\n", MD5_Test_Outputs[1]);
-        FILE* Test2 = getFile("Test2.txt");
-        char* t1 = md5_file(Test2);
-        printf("Output Str  : %s\n", t1);
-        printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[1], t1)==0? "true":"false");
-    go_to_sleep(1000);
-    printf("Testing...\n");
-    go_to_sleep(1000);
+    printf("MD5 Test 1  : %s\n", MD5_Test_Outputs[1]);
+    FILE* Test1 = getFile("Test1.txt");
+    char* t1 = md5_file(Test1);
+    printf("Output Str  : %s\n", t1);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[1], t1)==0? "true":"false");
+    /**================================== TEST 2 =======================================*/
+    go_to_sleep(500);
+    printf("Test 2...\n");
+    printf("MD5 Test 2  : %s\n", MD5_Test_Outputs[2]);
+    FILE* Test2 = getFile("Test2.txt");
+    char* t2 = md5_file(Test2);
+    printf("Output Str  : %s\n", t2);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[2], t2)==0? "true":"false");
+    /**================================== TEST 3 =======================================*/
+    go_to_sleep(500);
+    printf("Test 3...\n");
+    printf("MD5 Test 3  : %s\n", MD5_Test_Outputs[3]);
+    FILE* Test3 = getFile("Test3.txt");
+    char* t3 = md5_file(Test3);
+    printf("Output Str  : %s\n", t3);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[3], t3)==0? "true":"false");
+    /**================================== TEST 4 =======================================*/
+    go_to_sleep(500);
+    printf("Test 4...\n");
+    printf("MD5 Test 4  : %s\n", MD5_Test_Outputs[4]);
+    FILE* Test4 = getFile("Test4.txt");
+    char* t4 = md5_file(Test4);
+    printf("Output Str  : %s\n", t4);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[4], t4)==0? "true":"false");
+    /**================================== TEST 5 =======================================*/
+    go_to_sleep(500);
+    printf("Test 5...\n");
+    printf("MD5 Test 5  : %s\n", MD5_Test_Outputs[5]);
+    FILE* Test5 = getFile("Test5.txt");
+    char* t5 = md5_file(Test5);
+    printf("Output Str  : %s\n", t5);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[5], t5)==0? "true":"false");
+    /**================================== TEST 6 =======================================*/
+    go_to_sleep(500);
+    printf("Test 6...\n");
+    printf("MD5 Test 6  : %s\n", MD5_Test_Outputs[6]);
+    FILE* Test6 = getFile("Test6.txt");
+    char* t6 = md5_file(Test6);
+    printf("Output Str  : %s\n", t6);
+    printf("Matching    : %s\n", strcmp(MD5_Test_Outputs[6], t6)==0? "true":"false");
     printf("Testing Complete...");
 }
 
@@ -358,6 +398,11 @@ void string_to_file(char* c){
     fclose(plaintext_file);
 }
 
+/**
+ * Open file from given file name
+ * @param c
+ * @return opened file
+ */
 FILE * getFile(char* c){
     FILE *infile = NULL;
 //    printf("Opening File: %s\n", c);
@@ -368,6 +413,7 @@ FILE * getFile(char* c){
     }
     return infile;
 }
+
 int main(int argc,char *argv[]) {
 
 //    // Debugging args
