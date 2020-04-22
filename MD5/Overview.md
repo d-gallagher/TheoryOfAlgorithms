@@ -1,62 +1,107 @@
 # Project Overview
 ###### David Gallagher
 ## Introduction
-This project is an implementation of the MD5 algorithm in the C programming language.  
+This project is an implementation of the MD5 algorithm in the C programming language. That is, an algorithm which calculates 
+the MD5 hash of an input. This application will accept a file or a string of arbitrary length. The application has been 
+designed to accept a number of command line arguments outlines below, which provide additional functionality.   
+ 
+##### Class Breakdown
+* Unions: Container class for the Union `Block` used for padding the digest message.  
+* Enums: Container class for the enums used within the application.  
+  1. `PADFLAG` tracks the padding operation and is used to switch between padding a single 'One' bit, 'Zero' bits, 
+  and the final 64bit representation of the file.
+  2. `ENDIAN` is to determine if a system is in big or little endian.   
+* Constants: Container class to keep all the constants in one place.  
+* Functions: All functions used within the application are placed in the functions class. This enables us to freely use
+rather than explicitly declaring, the functions in the main.c class. We would otherwise have to declare each function sequentially 
+in main.c, prior to using the function in that class.  
+functions.c  #includes a reference to both 'enums.c' and 'unions.c' as some of the functions are using those classes and 
+require their inclusion. Note that we don't need to include those classes in main.c now that they're included in functions.c..  
+Functions defines ROTL, F, G, H, I as outlined in step 4 of the rfc1321 document for processing the message block. 
+* Main: Responsible for performing numerous tasks. Main #includes both 'functions.c' and 'constants.c'.  
+Main contains the implementation of the functions listed in functions.c. Each function is carefully commented in detail,
+a brief explanation of the main class is as follows:  
+The main method it's self is only about 40 lines of code, the bulk if the class is consumed by the larger nexthash function,
+while the remaining functions are mostly concise and singular in their provided functionality (As much as was possible, 
+functions were designed to do one thing, to increase overall modularity in the application).  
+Once the application launches, main detects command line arguments passed in and takes action, providing a help menu, MD5 
+tests, system endianness output, hashing a string or hashing a file.  
+A detailed explanation of the MD5 algorithm is outlined in the 'MD5 Algorithm' section below.  
 
+##### Command Line Arguments
+    
+    |       Command Arg 1             |    Command Arg 2     |              Action               |
+    
+    |---------------------------------|----------------------|-----------------------------------|
+    
+    |         --help                  |         N/A          | Prints help Menu.                 |
+    
+    |         --test                  |         N/A          | Run tests to verify MD5 hash.     |
+    
+    |         --check-endian          |         N/A          | Check system endianness.          |
+    
+    |         --version               |         N/A          | Check application current version.|
+    
+    |         --string                |  'type your string'  | Type an input to hash.            |
+    
+    |         --file                  |path/to/file.extension| Return the MD5 hash of file input.|
+
+##### Useful Software and Cheat Sheets for this project.
+* [Clion](https://www.jetbrains.com/clion/download/#section=windows) Jetbrains c development environment, does a lot of work for you.  
+* [Visual Studio Code](https://code.visualstudio.com/) a lightweight and prominent cross-platform IDE for development.  
+* [Windows Visual Studio 2019](https://visualstudio.microsoft.com/vs/) for compiling c programmes (guide available in Running 
+Instructions section).  
+ * [Cmder](https://cmder.net/) is a great cmd prompt replacement for windows. It uses linux terminal commands.  
+ * [VIM](https://www.linux.com/training-tutorials/vim-101-beginners-guide-vim/) is a versatile command line interface tool, 
+more challenging to learn than a traditional cli, but provides a lot of additional functionality and is worth learning 
+if you will be terminal bound for certain projects.  
+* [VIM Cheat Sheet](https://vim.rtorr.com/).   
+* Command line interactions: [Windows to UNIX Command Cheat Sheet](https://gist.github.com/jonlabelle/e8ba94cd29b8f63fd7dd3c4f95c1d210). 
 ## Running Instructions
+Running instructions are covered in brief in the MD5 [README](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/master/MD5/README.md).  
+#### Windows
+[Walkthrough: Compile a C program on the command line](https://docs.microsoft.com/en-us/cpp/build/walkthrough-compile-a-c-program-on-the-command-line?view=vs-2019).  
+For the sake of simplicity, we are using Visual Studio Developer command prompt to compile and run the application.
+```c
+cl main.c 
+```
+Generate MD5 Hash
+```c
+main --file "filename.extension"
+main --string 'string input'
+```
+#### Linux/MacOS
+[How to Write and Run a C Program in Linux](https://vitux.com/how-to-write-and-run-a-c-program-in-linux/).   
+
+```
+make main
+./main "file name"
+```
 ## Testing MD5
 Tests provided in the RFC1321 cover example inputs and their expected outputs as shown in the table below.  
-|TEST NUMBER| TEST MD5 Input                                                                    | Expected MD5 Encoding|
-|-----------| :------------:                                                                    | -------------|
-|   0       |""                                                                                 | d41d8cd98f00b204e9800998ecf8427e|
-|   1       |"a"                                                                                | 0cc175b9c0f1b6a831c399e269772661|
-|   2       |"abc"                                                                              | 900150983cd24fb0d6963f7d28e17f72|
-|   3       |"message digest"                                                                   | f96b697d7cb7938d525a2f31aaf161d0|
-|   4       |"abcdefghijklmnopqrstuvwxyz"                                                       | c3fcd3d76192e4007dfb496cca67e13b|
-|   5       |"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"                   | d174ab98d277d9f5a5611c2c9f419d9f|
-|   6       |"12345678901234567890123456789012345678901234567890123456789012345678901234567890" | 57edf4a22be3c955ac49da2e2107b67a|
+    
+    |TEST NUMBER|                                TEST MD5 Input                                     |      Expected MD5 Encoding      |
+    
+    |-----------|-----------------------------------------------------------------------------------| --------------------------------|
+    
+    |     0     |""                                                                                 | d41d8cd98f00b204e9800998ecf8427e|
+    
+    |     1     |"a"                                                                                | 0cc175b9c0f1b6a831c399e269772661|
+    
+    |     2     |"abc"                                                                              | 900150983cd24fb0d6963f7d28e17f72|
+    
+    |     3     |"message digest"                                                                   | f96b697d7cb7938d525a2f31aaf161d0|
+    
+    |     4     |"abcdefghijklmnopqrstuvwxyz"                                                       | c3fcd3d76192e4007dfb496cca67e13b|
+    
+    |     5     |"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"                   | d174ab98d277d9f5a5611c2c9f419d9f|
+    
+    |     6     |"12345678901234567890123456789012345678901234567890123456789012345678901234567890" | 57edf4a22be3c955ac49da2e2107b67a|
 
 The above suite of tests can be performed using the application, by using the command line argument `--test` when running 
 the application. This will output the results of the comparison to the console, test by test.
 
-### Encryption Overview
-In [cryptography](https://en.wikipedia.org/wiki/Cryptography), encryption is the process of encoding a message or data 
-in such a way that only authorized parties can access it and those who are not authorized cannot. It is also used as a means 
-to store sensitive information, for example user passwords, such as to keep the passwords obfuscated and protected from malicious attacks. 
-This means that a database of user names and passwords if it became public, would be useless to an attacker. 
-The protection however, even for encrypted data, is highly dependant upon the encryption used. 
- 
-Key features to consider regarding hashing algorithms:
-- __Speed__:  
-The algorithm reads the whole file, performs some mathematical functions and generates a hash.   
-A very computationally expensive algorithm may slow down the process.
-- __Security__:  
-The probability of two files having the same hash is called collision and can be very bad for our purposes,  
-so it should be as near to zero as possible.
-- __Generated hash length__:  
-This will save some space in the generated data stored, for example in a database, or in memory during runtime.
-
-__MD5__ is one such encryption algorithm that was used in the past to safeguard against such attacks but in the last 20-30 
-years it has been found to be vulnerable to certain attacks which can lead to security breaches.   
-### MD5 Encryption
-MD5 was initially designed by Ronald Rivest in 1992, to be used as a cryptographic hash function, suitable for use in cryptography.
-The purpose of the MD5 is to take an input of a fixed arbitrary size and compute a hash of 128 bits, described as a 'fingerprint' 
-or 'message digest'.  
-As of 1996, and subsequently in 2004, MD5 was found to be vulnerable to collision attacks and pre-image attacks, and deemed 
-> ["cryptographically broken and unsuitable for further use"](https://en.wikipedia.org/wiki/MD5).
-
-This vulnerability is explored further by Jacob Neyole in his paper 
-[Vulnerability of data security using MD5 function in php database design ](hhttps://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design),
-stating that 
-> "The security of the MD5 hash function is severely compromised" 
-
-and that through the use of hash collisions, (Detailed paper on collision attacks: 
-[Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)) 
-it is possible to produce two files with the same hash which in turn compromises the integrity of an MD5-hashed message.  
-Today, the MD5 hash algorithm is still in use as a checksum to verify the integrity of a file but is no longer used as a 
-means to store cryptographically secure passwords or other sensitive data. 
-
-### MD5 Algorithm
+## MD5 Algorithm
 MD5 takes a message or input of arbitrary length and outputs a 128-bit digest or hash of that input.  
 The algorithm can be broken into 5 Steps: 
 * Appending Padding Bits:
@@ -100,6 +145,67 @@ For each input block, 4 rounds of operations are performed with 16 operations in
 ```
 The contents in buffer words A, B, C, D are returned in sequence with low-order byte first.
 ```
+
+## Complexity
+#### Encryption Overview
+In [cryptography](https://en.wikipedia.org/wiki/Cryptography), encryption is the process of encoding a message or data 
+in such a way that only authorized parties can access it and those who are not authorized cannot. Cryptographic hash functions
+play a fundamental role in modern cryptography, finding particular use in areas of data integrity (storing sensitive information)
+and message authentication (verifying your password when you log in to your online bank account for example). The protection 
+however, even for encrypted data, is highly dependant upon the encryption algorithm being used.  
+> [The basic idea of cryptographic hash functions is that a hash-value serves as a compact representative image (sometimes 
+called an imprint, digital fingerprint, or message digest) of an input string, and can be used as if it were uniquely 
+identifiable with that string.] [1]
+
+Your user credentials for online banking for example are cryptographically secured with
+your service provider, such that when you enter your username and password, those being hashed with some algorithm will 
+match the digital fingerprint they have stored for you. They wil not know your plaintext password however, only it's hashed
+value which is computationally infeasible to reverse.    
+
+__*Key features to consider regarding cryptographic hashing algorithms:*__
+- __Speed__:  
+The algorithm reads the whole file, performs some mathematical functions and generates a hash.   
+A very computationally expensive algorithm may slow down the process.
+- __Security and Complexity__:  
+For hash functions the security can be described under the following three categories outlined in the [Handbook of Applied Cryptography][1]:
+   1. Preimage Resistance.  
+   For all possible outputs, it is computationally infeasible to find any input which hashes to that output. 
+   2. Second Preimage Resistance.  
+   It is computationally infeasible to find any second input which has the same output as any specified input.
+   3. Collision Resistance.  
+   It is computationally infeasible to find any two distinct inputs which hash to the same output. 
+
+- __Generated hash length__:  
+This will save some space in the generated data stored, for example in a database, or in memory during runtime.
+ 
+   
+#### MD5 Encryption Complexity
+MD5 was initially designed by Ronald Rivest in 1992, to be used as a cryptographic hash function, suitable for use in cryptography.
+The purpose of the MD5 is to take an input of a fixed arbitrary size and compute a hash of 128 bits, described as a 'fingerprint' 
+or 'message digest' of the input. The encoded output of the MD5 encryption should be computationally infeasible to reverse. 
+
+__MD5__  has been found to be vulnerable to collision attacks, leaving it vulnerable to security breaches.  
+As of 1996, and subsequently in 2004, MD5 was found to be vulnerable to collision attacks and pre-image attacks, and deemed 
+> ["cryptographically broken and unsuitable for further use"](https://en.wikipedia.org/wiki/MD5).
+
+This vulnerability is explored further by Jacob Neyole in his paper 
+[Vulnerability of data security using MD5 function in php database design ](hhttps://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design),
+stating that 
+> "The security of the MD5 hash function is severely compromised" 
+
+and that through the use of hash collisions, (Detailed paper on collision attacks: 
+[Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)) 
+it is possible to produce two files with the same hash which in turn compromises the integrity of an MD5-hashed message.  
+Today, the MD5 hash algorithm is still in use as a checksum to verify the integrity of a file but is no longer used as a 
+means to store cryptographically secure passwords or other sensitive data. 
+
+While there is substantial and demonstrable evidence that the MD5 algorithm is no longer robust enough for cryptographic 
+security, it still has its uses as a fast non-cryptographic hash with a low collision-rate and is used to verify the integrity 
+of files.   
+
+It should be computationally infeasible to reverse the hash of the function. Given the minimum output of most (if not all)
+hash algorithms are 128 bits, the possibility of brute-forcing any hash are non-existent, as there is not enough time in 
+the universe to perform such an operation. 
 
 ## Some thoughts on [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)
 RFC 1321 describes the MD5 message-digest algorithm.
@@ -180,9 +286,6 @@ I have included functions
 and [bswap_32](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/2900f564e15ef756bd8442136a8bba5dc1571cf3/MD5/main.c#L112) 
 to work around the functionality provided in byteswap.h.
 
-## Complexity
-
-
 
 ## Conclusion
 In conclusion, MD5 fulfills the requirements of a hashing algorithm with one exception, and is no longer considered safe 
@@ -203,6 +306,7 @@ How hard is it for someone to find two messages (any two messages) that hash the
 ### References
 [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)  
 [Wikipedia - Cryptography](https://en.wikipedia.org/wiki/Cryptography)  
+[1](http://labit501.upct.es/~fburrull/docencia/SeguridadEnRedes/teoria/bibliography/HandbookOfAppliedCryptography_AMenezes.pdf)  
 [Wikipedia - MD5 Message Digest](https://en.wikipedia.org/wiki/MD5)  
 [Vulnerability of data security using MD5 function in php database design ](https://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design)  
 [Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)  
@@ -215,3 +319,4 @@ How hard is it for someone to find two messages (any two messages) that hash the
 [StackOverflow - Big vs Little Endian](https://stackoverflow.com/a/701644)  
 [MINGW - Windows compiler for C](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html)  
 [MD5 Collision Demo](https://www.mscs.dal.ca/~selinger/md5collision/)  
+[Github Markdown Cheat Sheet](https://guides.github.com/features/mastering-markdown/).  
