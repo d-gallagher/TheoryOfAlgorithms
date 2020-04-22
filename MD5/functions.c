@@ -18,6 +18,7 @@ void nexthash(union BLOCK *M, WORD *H);
 int nextBlock(union BLOCK *M, FILE *inFile, uint64_t *numbits, PADFLAG *status);
 char* md5_file(FILE *f);
 void string_to_file(char* c);
-void run_tests();
+void run_all_tests();
 void menu_no_args();
 FILE * getFile(char* c);
+void run_hash_comparison_test(int testID, char* testFile, const char *expected);
