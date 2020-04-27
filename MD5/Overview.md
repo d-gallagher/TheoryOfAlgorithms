@@ -153,9 +153,10 @@ in such a way that only authorized parties can access it and those who are not a
 play a fundamental role in modern cryptography, finding particular use in areas of data integrity (storing sensitive information)
 and message authentication (verifying your password when you log in to your online bank account for example). The protection 
 however, even for encrypted data, is highly dependant upon the encryption algorithm being used.  
-> [The basic idea of cryptographic hash functions is that a hash-value serves as a compact representative image (sometimes 
+> The basic idea of cryptographic hash functions is that a hash-value serves as a compact representative image (sometimes 
 called an imprint, digital fingerprint, or message digest) of an input string, and can be used as if it were uniquely 
-identifiable with that string.] [1]
+identifiable with that string. 
+>- [HandbookOfAppliedCryptography](http://labit501.upct.es/~fburrull/docencia/SeguridadEnRedes/teoria/bibliography/HandbookOfAppliedCryptography_AMenezes.pdf) [Sec:9.1]
 
 Your user credentials for online banking for example are cryptographically secured with
 your service provider, such that when you enter your username and password, those being hashed with some algorithm will 
@@ -167,7 +168,7 @@ __*Key features to consider regarding cryptographic hashing algorithms:*__
 The algorithm reads the whole file, performs some mathematical functions and generates a hash.   
 A very computationally expensive algorithm may slow down the process.
 - __Security and Complexity__:  
-For hash functions the security can be described under the following three categories outlined in the [Handbook of Applied Cryptography][1]:
+For hash functions the security can be described under the following three categories outlined in the [Handbook of Applied Cryptography][Sec:9.2.2]:
    1. Preimage Resistance.  
    For all possible outputs, it is computationally infeasible to find any input which hashes to that output. 
    2. Second Preimage Resistance.  
@@ -180,32 +181,47 @@ This will save some space in the generated data stored, for example in a databas
  
    
 #### MD5 Encryption Complexity
-MD5 was initially designed by Ronald Rivest in 1992, to be used as a cryptographic hash function, suitable for use in cryptography.
-The purpose of the MD5 is to take an input of a fixed arbitrary size and compute a hash of 128 bits, described as a 'fingerprint' 
-or 'message digest' of the input. The encoded output of the MD5 encryption should be computationally infeasible to reverse. 
+__Space and Time complexity of MD5__   
+As we have seen in the section on the MD5 algorithm, MD5 processes data in blocks of 512 bit, doing 4 rounds of some internal 
+operation, which in some cases involves adding a block to the data.  
+So, if n is bytes, it does roundup(8*n/512) operations which is O(n) in BigO. This means that the length of time taken to 
+perform the encryption will grow linearly in proportion to the size of the input.  
 
 __MD5__  has been found to be vulnerable to collision attacks, leaving it vulnerable to security breaches.  
-As of 1996, and subsequently in 2004, MD5 was found to be vulnerable to collision attacks and pre-image attacks, and deemed 
+As of 1996, and subsequently in 2004, MD5 was found to be vulnerable to collision attacks, and deemed 
 > ["cryptographically broken and unsuitable for further use"](https://en.wikipedia.org/wiki/MD5).
 
-This vulnerability is explored further by Jacob Neyole in his paper 
-[Vulnerability of data security using MD5 function in php database design ](hhttps://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design),
-stating that 
-> "The security of the MD5 hash function is severely compromised" 
+This vulnerability is explored further by Praveen Gauravaram, William Millan and Juanma Gonzalez Neito in their 2005 paper 
+[Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf), which
+elaborates on finding multi-block collisions. They suggest that:
+>In the multi-block collision attacks on MD5, SHA-0 and SHA-1, it was found to be hard to find full collisions for the 
+>first iteration of the compression function using the fixed IV of the hash function than to do so for the second iteration. 
+>For example,the complexity of finding near-collisions or generating two closely related pseudo IVs for the SHA-1 compression 
+>function using fixed IV is 2^68 computations whereas the complexity of finding full collision on 2 blocks is 2^69
+>(this was recently improved to 2^63).
 
-and that through the use of hash collisions, (Detailed paper on collision attacks: 
-[Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)) 
-it is possible to produce two files with the same hash which in turn compromises the integrity of an MD5-hashed message.  
-Today, the MD5 hash algorithm is still in use as a checksum to verify the integrity of a file but is no longer used as a 
-means to store cryptographically secure passwords or other sensitive data. 
+__Generating Collisions__   
+Further vulnerabilities to collision resistance are noted in [How to break MD5 and other hash functions](http://merlot.usc.edu/csac-f06/papers/Wang05a.pdf),
+the authors, Xiaoyun Wang and Hongbo Yu detail their approach to their *modular differential* attack. It's complexity is 
+stated to
+> not exceed the running time of 2^39 MD5 operations. 
+
+Xiaoyun Wang and Hongbo Yu conclude their paper with a summary of comparisons of complexity to break MD5, MD4, HAVAL, RIPEMD,
+and SHA-0 respectively. This research dates back to 2005, not much more than a decade after MD5 was devised. 
+Using the steps outlined the above paper, it is possible to produce two files with the same hash which compromise the integrity
+of an MD5-hashed message. This fact is demonstrated for Windows and Linux in this demo. One can [generate 2 messages](https://www.mscs.dal.ca/~selinger/md5collision/), 
+that both hash to the same value.   
+
+MD5 produces a 16 byte hash (128 bits). The chance of a given hash output/digest showing up is 1/(2^128).  
+[This](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html) blog explains a little more detail about the size of
+2^128, it's a big number, 1/(2^128) is tiny.
+It should be 'computationally infeasible' to reverse the hash of the function. Given the minimum output of most (if not all)
+hash algorithms are 128 bits, the possibility of brute-forcing any hash are non-existent, as there is not enough time in 
+the universe to perform such an operation. 
 
 While there is substantial and demonstrable evidence that the MD5 algorithm is no longer robust enough for cryptographic 
 security, it still has its uses as a fast non-cryptographic hash with a low collision-rate and is used to verify the integrity 
-of files.   
-
-It should be computationally infeasible to reverse the hash of the function. Given the minimum output of most (if not all)
-hash algorithms are 128 bits, the possibility of brute-forcing any hash are non-existent, as there is not enough time in 
-the universe to perform such an operation. 
+of files by means of a checksum. 
 
 ## Some thoughts on [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)
 RFC 1321 describes the MD5 message-digest algorithm.
@@ -261,9 +277,6 @@ Unbiased means equal probability of getting a 1 or a 0.
 This is a profound feature of the algorithm. It ensures that the highest degree of collision mitigation is applied.
 Collisions are the death of any hashing algorithm, as producing duplicate hashes for different inputs leads to 
 vulnerabilities (discussed earlier).  
-MD5 produces a 16 byte hash (128 bits). The chance of a given hash output/digest showing up is 1/(2^128).  
-[This](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html) blog explains a little more detail about the size of
-2^128, it's a big number, 1/(2^128) is tiny.
 
 #### Endianness
 Are your significant bits on the left or the right..?  
@@ -289,8 +302,7 @@ to work around the functionality provided in byteswap.h.
 
 ## Conclusion
 In conclusion, MD5 fulfills the requirements of a hashing algorithm with one exception, and is no longer considered safe 
-for use with passwords. It is possible for a third party to [generate 2 messages](https://www.mscs.dal.ca/~selinger/md5collision/), 
-that both hash to the same value.  
+for use with passwords.  
 
 __MD5 fulfills:__
 - __Preimage Resistance:__  
@@ -304,19 +316,59 @@ __MD5 fails:__
 How hard is it for someone to find two messages (any two messages) that hash the same.
 
 ### References
-[Request For Comments 1321](https://tools.ietf.org/html/rfc1321)  
-[Wikipedia - Cryptography](https://en.wikipedia.org/wiki/Cryptography)  
-[1](http://labit501.upct.es/~fburrull/docencia/SeguridadEnRedes/teoria/bibliography/HandbookOfAppliedCryptography_AMenezes.pdf)  
-[Wikipedia - MD5 Message Digest](https://en.wikipedia.org/wiki/MD5)  
-[Vulnerability of data security using MD5 function in php database design ](https://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design)  
-[Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)  
-[IBM - Integer literals in C](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.cbclx01/lit_integer.htm#lit_integer__hexintlit)  
-[Wikipedia - Nothing-up-my-slieve numbers](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)  
-[How big is 2**128? - Blog about how big the bits get!](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html)  
-[Clion - IDE](https://www.jetbrains.com/clion/)  
-[Endian lib in C <byteswap.h>](https://sites.uclouvain.be/SystInfo/usr/include/bits/byteswap.h.html)  
-[Wikipedia - Endianness](https://en.wikipedia.org/wiki/Endianness)  
-[StackOverflow - Big vs Little Endian](https://stackoverflow.com/a/701644)  
-[MINGW - Windows compiler for C](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html)  
-[MD5 Collision Demo](https://www.mscs.dal.ca/~selinger/md5collision/)  
-[Github Markdown Cheat Sheet](https://guides.github.com/features/mastering-markdown/).  
+The references outlined below were critical to gaining a more complete understanding of the MD5 algorithm and the concerns
+about it's security, the complexity of the algorithm and the attacks which make it vulnerable, and questions I had in relation 
+to the original RFC1321 document and the terminology used therin.   
+
+Original document providing instructions for the MD5.
+* [Request For Comments 1321](https://tools.ietf.org/html/rfc1321)
+  
+Wikipedia Overview of MD5 Algorithm. Good place to start for research, branching out from there with further questions.
+* [Wikipedia - MD5 Message Digest](https://en.wikipedia.org/wiki/MD5)
+  
+Wikipedia Overview of Cryptography for general explanation of concept.
+* [Wikipedia - Cryptography](https://en.wikipedia.org/wiki/Cryptography)
+  
+Detailed reference of cryptography for professional cryptographers. Exceptional 'must have' resource for exploring cryptography 
+and complexity. This resource should really be included in any documentation seeking to elaborate on cryptographic functions.
+* [HandbookOfAppliedCryptography](http://labit501.upct.es/~fburrull/docencia/SeguridadEnRedes/teoria/bibliography/HandbookOfAppliedCryptography_AMenezes.pdf)
+   
+An exploratory paper into the security concerns regarding the use of MD5 in databases, also applies to MD5 usage in general.
+* [Vulnerability of data security using MD5 function in php database design ](https://www.researchgate.net/publication/280926128_Vulnerability_of_data_security_using_MD5_function_in_php_database_design)
+  
+Comprehensive study on the collision resistance in MD5 and other hash functions. 
+* [Some thoughts on Collision Attacks in the Hash Functions MD5,SHA-0 and SHA-1](https://eprint.iacr.org/2005/391.pdf)
+  
+Breaking the collision resistance of MD5 paper reference - Xiaoyun Wang and Hongbo Yu
+*[How to break MD5 and  other hash functions](http://merlot.usc.edu/csac-f06/papers/Wang05a.pdf)
+
+Demo - breaking the collision resistance of MD5.
+* [MD5 Collision Demo](https://www.mscs.dal.ca/~selinger/md5collision/)  
+   
+Documentation of C language Integer Literals. Used to elaborate on 
+* [IBM - Integer literals in C](https://www.ibm.com/support/knowledgecenter/en/SSLTBW_2.2.0/com.ibm.zos.v2r2.cbclx01/lit_integer.htm#lit_integer__hexintlit)  
+
+General concept explanation of Nothing up my slieve numbers, used extensively in cryptography as a standard. 
+* [Wikipedia - Nothing-up-my-slieve numbers](https://en.wikipedia.org/wiki/Nothing-up-my-sleeve_number)  
+
+When explaining the 'size' of really large numbers it's useful to have a resource which puts unthinkable numbers into context.
+This resource is included for that reason.
+* [How big is 2**128? - Blog about how big the bits get!](http://bugcharmer.blogspot.com/2012/06/how-big-is-2128.html)  
+
+Link for software package for development in C.
+* [Clion - IDE](https://www.jetbrains.com/clion/)  
+
+General concept overview on Endianness, provided as a place to start learning and asking questions.
+* [Wikipedia - Endianness](https://en.wikipedia.org/wiki/Endianness)  
+
+The byteswap lib in C. Referenced while explaining a workaround used during windows development.
+* [Endian lib in C <byteswap.h>](https://sites.uclouvain.be/SystInfo/usr/include/bits/byteswap.h.html)  
+
+Included as part of explanation about byteswapping and endianness in c on windows.
+* [MINGW - Windows compiler for C](http://mingw.5.n7.nabble.com/byteswap-h-included-in-mingw-td12385.html)  
+
+Supportive reference to endianness from stack overflow, further elaborates on organizing bytes on machines. 
+* [StackOverflow - Big vs Little Endian](https://stackoverflow.com/a/701644)  
+
+Essential markdown cheat sheet reference for working with github MD files, creating links, tables etc. 
+* [Github Markdown Cheat Sheet](https://guides.github.com/features/mastering-markdown/).  
