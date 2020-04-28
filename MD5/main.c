@@ -22,7 +22,7 @@
 // */
 //void go_to_sleep(int miliseconds){
 //    Sleep(miliseconds);
-}
+//}
 // Processing functions for:
 // Round 1
 void FF(WORD *a, WORD b, WORD c, WORD d, WORD x, WORD s, WORD ac){
@@ -337,7 +337,7 @@ char* md5_file(FILE *f){
 //    printf("%s", block4);
 //    printf("\n" );
 
-    char* finalOut = malloc(32 * sizeof(char));
+    char* finalOut = (char*)malloc(32 * sizeof(char));
 
     strncpy(finalOut, block1, 9);//finalOut += block1;
     strncat(finalOut, block2, 9);//finalOut += block1;
@@ -357,7 +357,7 @@ char* md5_file(FILE *f){
  * Save file and print MD5 hash.
  * @param c
  */
-void string_to_file(char* c){
+int string_to_file(char* c){
     // Allocate string input to file
     FILE* plaintext_file;
     // set file path
@@ -370,7 +370,8 @@ void string_to_file(char* c){
     if (plaintext_file == NULL)
     {
         printf("Error: Unable to process input to file ");
-        exit(0);
+//         exit(0);
+        return 0;
     }
 
     // put the char contents to the file
@@ -378,6 +379,7 @@ void string_to_file(char* c){
 
     // close file
     fclose(plaintext_file);
+    return 1;
 }
 
 /**
