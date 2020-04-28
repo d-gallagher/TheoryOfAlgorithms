@@ -16,12 +16,12 @@
 #include "constants.c"
 #include "functions.c"
 
-/**
- * Put the system to sleep
- * @param miliseconds
- */
-void go_to_sleep(int miliseconds){
-    Sleep(miliseconds);
+///**
+// * Put the system to sleep
+// * @param miliseconds
+// */
+//void go_to_sleep(int miliseconds){
+//    Sleep(miliseconds);
 }
 // Processing functions for:
 // Round 1
@@ -254,21 +254,21 @@ void menu_no_args(){
  */
 void run_all_tests(){
     printf("== Running MD5 Test Suite ==\n\n");
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(0, "testFiles\\Test0.txt", MD5_Test_Outputs[0]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(1, "testFiles\\Test1.txt", MD5_Test_Outputs[1]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(2, "testFiles\\Test2.txt", MD5_Test_Outputs[2]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(3, "testFiles\\Test3.txt", MD5_Test_Outputs[3]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(4, "testFiles\\Test4.txt", MD5_Test_Outputs[4]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(5, "testFiles\\Test5.txt", MD5_Test_Outputs[5]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     run_hash_comparison_test(6, "testFiles\\Test6.txt", MD5_Test_Outputs[6]);
-    go_to_sleep(500);
+//    go_to_sleep(500);
     printf("Testing Complete...\n");
 }
 
@@ -337,7 +337,8 @@ char* md5_file(FILE *f){
 //    printf("%s", block4);
 //    printf("\n" );
 
-    char* finalOut = malloc(32);
+    char* finalOut = malloc(32 * sizeof(char));
+
     strncpy(finalOut, block1, 9);//finalOut += block1;
     strncat(finalOut, block2, 9);//finalOut += block1;
     strncat(finalOut, block3, 9);//finalOut += block1;
