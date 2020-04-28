@@ -6,6 +6,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <assert.h>
+#include <stdlib.h>
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -336,8 +337,10 @@ char* md5_file(FILE *f){
 //    printf("%s", block3);
 //    printf("%s", block4);
 //    printf("\n" );
-    char* finalOut;
-    finalOut = (char*)malloc(32 * sizeof(char));
+//    char* finalOut;
+//    finalOut = (char*)malloc(32 * sizeof(char));
+
+    char* finalOut = malloc(32);
 
     strncpy(finalOut, block1, 9);//finalOut += block1;
     strncat(finalOut, block2, 9);//finalOut += block1;
