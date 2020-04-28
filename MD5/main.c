@@ -256,19 +256,19 @@ void menu_no_args(){
 void run_all_tests(){
     printf("== Running MD5 Test Suite ==\n\n");
 //    go_to_sleep(500);
-    run_hash_comparison_test(0, "testFiles\\Test0.txt", MD5_Test_Outputs[0]);
+    run_hash_comparison_test(0, "Test0.txt", MD5_Test_Outputs[0]);
 //    go_to_sleep(500);
-    run_hash_comparison_test(1, "testFiles\\Test1.txt", MD5_Test_Outputs[1]);
+    run_hash_comparison_test(1, "Test1.txt", MD5_Test_Outputs[1]);
 //    go_to_sleep(500);
-    run_hash_comparison_test(2, "testFiles\\Test2.txt", MD5_Test_Outputs[2]);
+    run_hash_comparison_test(2, "Test2.txt", MD5_Test_Outputs[2]);
 //    go_to_sleep(500);
-    run_hash_comparison_test(3, "testFiles\\Test3.txt", MD5_Test_Outputs[3]);
+    run_hash_comparison_test(3, "Test3.txt", MD5_Test_Outputs[3]);
 //    go_to_sleep(500);
-    run_hash_comparison_test(4, "testFiles\\Test4.txt", MD5_Test_Outputs[4]);
+    run_hash_comparison_test(4, "Test4.txt", MD5_Test_Outputs[4]);
 //    go_to_sleep(500);
-    run_hash_comparison_test(5, "testFiles\\Test5.txt", MD5_Test_Outputs[5]);
+    run_hash_comparison_test(5, "Test5.txt", MD5_Test_Outputs[5]);
 //    go_to_sleep(500);
-    run_hash_comparison_test(6, "testFiles\\Test6.txt", MD5_Test_Outputs[6]);
+    run_hash_comparison_test(6, "Test6.txt", MD5_Test_Outputs[6]);
 //    go_to_sleep(500);
     printf("Testing Complete...\n");
 }
