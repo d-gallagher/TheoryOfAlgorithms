@@ -404,13 +404,13 @@ FILE * getFile(char* c){
 int main(int argc,char *argv[]) {
 
     // Debugging args
-    int ctr;
-    printf("argc %d: \n",argc);
-    for( ctr=0; ctr < argc; ctr++ )
-    {
-        printf("Input %d: ",ctr);
-        printf("argv: %s\n", argv[ctr] );
-    }
+//    int ctr;
+//    printf("argc %d: \n",argc);
+//    for( ctr=0; ctr < argc; ctr++ )
+//    {
+//        printf("Input %d: ",ctr);
+//        printf("argv: %s\n", argv[ctr] );
+//    }
 
     // Check args
     if (argc < 2) { printf("No input given.. Enter --help for assistance.\n"); return 1; }
