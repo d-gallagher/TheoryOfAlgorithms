@@ -336,8 +336,8 @@ char* md5_file(FILE *f){
 //    printf("%s", block3);
 //    printf("%s", block4);
 //    printf("\n" );
-
-    char* finalOut = (char*)malloc(32 * sizeof(char));
+    char* finalOut;
+    finalOut = (char*)malloc(32 * sizeof(char));
 
     strncpy(finalOut, block1, 9);//finalOut += block1;
     strncat(finalOut, block2, 9);//finalOut += block1;
