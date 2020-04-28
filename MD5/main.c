@@ -255,19 +255,19 @@ void menu_no_args(){
 void run_all_tests(){
     printf("== Running MD5 Test Suite ==\n\n");
     go_to_sleep(500);
-    run_hash_comparison_test(0, "Test0.txt", MD5_Test_Outputs[0]);
+    run_hash_comparison_test(0, "testFiles\\Test0.txt", MD5_Test_Outputs[0]);
     go_to_sleep(500);
-    run_hash_comparison_test(1, "Test1.txt", MD5_Test_Outputs[1]);
+    run_hash_comparison_test(1, "testFiles\\Test1.txt", MD5_Test_Outputs[1]);
     go_to_sleep(500);
-    run_hash_comparison_test(2, "Test2.txt", MD5_Test_Outputs[2]);
+    run_hash_comparison_test(2, "testFiles\\Test2.txt", MD5_Test_Outputs[2]);
     go_to_sleep(500);
-    run_hash_comparison_test(3, "Test3.txt", MD5_Test_Outputs[3]);
+    run_hash_comparison_test(3, "testFiles\\Test3.txt", MD5_Test_Outputs[3]);
     go_to_sleep(500);
-    run_hash_comparison_test(4, "Test4.txt", MD5_Test_Outputs[4]);
+    run_hash_comparison_test(4, "testFiles\\Test4.txt", MD5_Test_Outputs[4]);
     go_to_sleep(500);
-    run_hash_comparison_test(5, "Test5.txt", MD5_Test_Outputs[5]);
+    run_hash_comparison_test(5, "testFiles\\Test5.txt", MD5_Test_Outputs[5]);
     go_to_sleep(500);
-    run_hash_comparison_test(6, "Test6.txt", MD5_Test_Outputs[6]);
+    run_hash_comparison_test(6, "testFiles\\Test6.txt", MD5_Test_Outputs[6]);
     go_to_sleep(500);
     printf("Testing Complete...\n");
 }
@@ -286,6 +286,7 @@ void run_hash_comparison_test(int testID, char* testFile, const char *expected){
     char* t0 = md5_file(Test);
     printf("Actual MD5    : %s\n", t0);
     printf("Matching MD5? : %s\n", strcmp(expected, t0)==0? "true":"false");
+    printf("Is 32 bits?   : %s\n", strlen(t0)==32? "true":"false");
     printf("\n");
 }
 
@@ -320,7 +321,7 @@ char* md5_file(FILE *f){
     unsigned char block3[9];
     unsigned char block4[9];
 
-//    printf("MD5 Output  : ");
+//    printf("MD5 Output  >: ");
 //    for (int i = 0; i < 4; i++){
 //        printf("%08" PRIx32 "", bswap_32(H[i]));
 //    }
@@ -342,11 +343,10 @@ char* md5_file(FILE *f){
     strncat(finalOut, block3, 9);//finalOut += block1;
     strncat(finalOut, block4, 9);//finalOut += block1;
 //    printf("Output Str  : %s\n", finalOut);
-//
 
     // Close the file
     fclose(f);
-
+    // Return the output
     return finalOut;
 }
 

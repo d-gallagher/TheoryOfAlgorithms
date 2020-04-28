@@ -2,8 +2,8 @@
 ###### David Gallagher
 ## Project Specs
 Write a program in the C programming language that calculates the MD5 hash digest of an input.
-The algorithm is specified in the [Request For Comments 1321](https://tools.ietf.org/html/rfc1321) document supplied by the Internet Engineering Task Force.
-
+The algorithm is specified in the [Request For Comments 1321](https://tools.ietf.org/html/rfc1321) document supplied by the Internet Engineering Task Force.  
+A detailed breakdown of the project is located in the project [Overview](https://github.com/d-gallagher/TheoryOfAlgorithms/blob/master/MD5/Overview.md).
 ## Instructions for use 
 You will need Git [installed locally](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).  
 
